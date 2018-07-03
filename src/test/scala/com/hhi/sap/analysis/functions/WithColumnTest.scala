@@ -1,11 +1,9 @@
 package com.hhi.sap.analysis.functions
 
-import com.hhi.sap.config.DateTimeUtil
 import com.hhi.sap.main.SparkSessionTestWrapper
 import org.apache.spark.sql.expressions.Window
 import org.apache.spark.sql.functions._
 import org.scalatest.FlatSpec
-import org.slf4j.LoggerFactory
 
 class WithColumnTest extends FlatSpec with SparkSessionTestWrapper{
   case class TestBean(Hour: String, Category: String, TotalValue: String)
@@ -18,11 +16,6 @@ class WithColumnTest extends FlatSpec with SparkSessionTestWrapper{
       (1, "cat67", 28.5, "Y"), (1, "cat4", 26.8, "N"),   (1, "cat13", 12.6, "Y"),   (1, "cat23", 5.3, "N"),
       (2, "cat56", 39.6, "Y"), (2, "cat40", 29.7, "Y"),  (2, "cat187", 27.9, "N"),  (2, "cat68", 9.8, "Y"),
       (3, "cat8", 35.6, "Y"))).toDF("Hour", "Category", "TotalValue", "STAT")
-
-    val dtu = new DateTimeUtil()
-
-    val date = dtu.date
-    val time = dtu.time
 
     val progressShip = table.where("STAT = 'N'").as("N")
     val completeShip = table.where("STAT = 'Y'").as("Y")

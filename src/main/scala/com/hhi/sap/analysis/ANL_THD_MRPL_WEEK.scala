@@ -1,5 +1,8 @@
 package com.hhi.sap.analysis
 
+import java.util.Calendar
+
+import com.hhi.sap.analysis.functions.ProcessClassification
 import com.hhi.sap.config.DateTimeUtil
 import com.hhi.sap.table.bean.BEAN_THD_MRPL_WEEK
 import com.hhi.sap.table.term.TERM_MASTER
@@ -32,8 +35,8 @@ class ANL_THD_MRPL_WEEK(sql: SQLContext) {
         e.getAs(TERM_MASTER.MRPL_WEEK.SAUPBU),
         e.getAs(TERM_MASTER.MRPL_WEEK.PSPID),
         e.getAs(TERM_MASTER.MRPL_WEEK.SERNO),
-        e.getAs(TERM_MASTER.MRPL_WEEK.STG_GUBUN),
-        e.getAs(TERM_MASTER.MRPL_WEEK.MAT_GUBUN),
+        ProcessClassification.getSTG_GUBUN(e.getAs(TERM_MASTER.ZPDCT6023.ZMIDACTNO), e.getAs(TERM_MASTER.ZPDCT6023.ZHDRMATNR)),
+        ProcessClassification.getMAT_GUBUN(e.getAs(TERM_MASTER.ZPDCT6023.ZMIDACTNO), e.getAs(TERM_MASTER.EBAN.LGORT), e.getAs(TERM_MASTER.EBAN.PAINTGBN), e.getAs(TERM_MASTER.MARA.ZZMGROUP)),
         e.getAs(TERM_MASTER.MRPL_WEEK.WCM5),
         e.getAs(TERM_MASTER.MRPL_WEEK.WCM4),
         e.getAs(TERM_MASTER.MRPL_WEEK.WCM3),
@@ -65,10 +68,10 @@ class ANL_THD_MRPL_WEEK(sql: SQLContext) {
         e.getAs(TERM_MASTER.MRPL_WEEK.WCP23),
         e.getAs(TERM_MASTER.MRPL_WEEK.WCP24),
         e.getAs(TERM_MASTER.MRPL_WEEK.WCP25),
-        e.getAs(TERM_MASTER.MRPL_WEEK.PGMID),
-        e.getAs(TERM_MASTER.MRPL_WEEK.CNAM),
-        e.getAs(TERM_MASTER.MRPL_WEEK.CDAT),
-        e.getAs(TERM_MASTER.MRPL_WEEK.CTIM)
+        PGMID,
+        CNAM,
+        date.format(Calendar.getInstance().getTime),
+        time.format(Calendar.getInstance().getTime)
       )
     }).toDF()
   }

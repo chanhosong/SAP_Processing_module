@@ -10,15 +10,13 @@ import org.slf4j.LoggerFactory
 class ANL_ZPDCT6123(sql: SQLContext) {
   private val logger = LoggerFactory.getLogger(this.getClass)
 
-  def run(tb_ZPDCT6123: DataFrame, eban: DataFrame, mara: DataFrame): DataFrame = genTable(tb_ZPDCT6123, eban, mara)
+  def run(tb_ZPDCT6123: DataFrame, tb_ZPSCT_600: DataFrame, eban: DataFrame, mara: DataFrame): DataFrame = genTable(tb_ZPDCT6123, tb_ZPSCT_600,eban, mara)
 
-  private def genTable(tb_ZPDCT6123: DataFrame, eban: DataFrame, mara: DataFrame): DataFrame = {
+  private def genTable(tb_ZPDCT6123: DataFrame, tb_ZPSCT_600: DataFrame, eban: DataFrame, mara: DataFrame): DataFrame = {
     import sql.sparkSession.implicits._
 
     val dtu = new DateTimeUtil()
 
-    val weekNumber = dtu.weekNumber
-    val monthNumber = dtu.monthNumber
     val date = dtu.date
     val time = dtu.time
 
@@ -30,7 +28,7 @@ class ANL_ZPDCT6123(sql: SQLContext) {
       CNAM = "[DEBUGMODE]A504863"
     }
 
-    loadTable(tb_ZPDCT6123, eban, mara).rdd
+    loadTable(tb_ZPDCT6123, tb_ZPSCT_600, eban, mara).rdd
       .map(e=>
         BEAN_ZPDCT6123(
           e.getAs(TERM_MASTER.ZPDCT6123.COMPANYID),
@@ -56,8 +54,8 @@ class ANL_ZPDCT6123(sql: SQLContext) {
           e.getAs(TERM_MASTER.ZPDCT6123.WERKS),
           e.getAs(TERM_MASTER.ZPDCT6123.ZFROMSYS),
           e.getAs(TERM_MASTER.ZPDCT6123.ZPTMR),
-          weekNumber,
-          monthNumber,
+          dtu.getWeekDifference(TERM_MASTER.ZPDCT6123.ZEXDATE, TERM_MASTER.ZPSCT600.WC).toString,
+          dtu.getMonthDifference(TERM_MASTER.ZPDCT6123.ZEXDATE, TERM_MASTER.ZPSCT600.WC).toString,
           ProcessClassification.getSTG_GUBUN(e.getAs(TERM_MASTER.ZPDCT6123.ZMIDACTNO), e.getAs(TERM_MASTER.ZPDCT6123.ZHDRMATNR)),
           ProcessClassification.getMAT_GUBUN(e.getAs(TERM_MASTER.ZPDCT6123.ZMIDACTNO), e.getAs(TERM_MASTER.EBAN.LGORT), e.getAs(TERM_MASTER.EBAN.PAINTGBN), e.getAs(TERM_MASTER.MARA.ZZMGROUP)),
           PGMID,
@@ -68,8 +66,7 @@ class ANL_ZPDCT6123(sql: SQLContext) {
     ).toDF
   }
 
-  private def loadTable(tb_ZPDCT6123: DataFrame, eban: DataFrame, mara: DataFrame): DataFrame = {
-
+  private def loadTable(tb_ZPDCT6123: DataFrame, tb_ZPSCT_600: DataFrame, eban: DataFrame, mara: DataFrame): DataFrame = {
     tb_ZPDCT6123.select(
       TERM_MASTER.ZPDCT6123.COMPANYID,
       TERM_MASTER.ZPDCT6123.SAUPBU,
@@ -95,6 +92,8 @@ class ANL_ZPDCT6123(sql: SQLContext) {
       TERM_MASTER.ZPDCT6123.WERKS,
       TERM_MASTER.ZPDCT6123.ZFROMSYS,
       TERM_MASTER.ZPDCT6123.ZPTMR
-    ).join(eban, Seq(TERM_MASTER.EBAN.BANFN, TERM_MASTER.EBAN.BFNPO)).join(mara, Seq(TERM_MASTER.MARA.MATNR))
+    ).join(tb_ZPSCT_600, Seq(TERM_MASTER.ZPSCT600.COMPANYID, TERM_MASTER.ZPSCT600.SAUPBU, TERM_MASTER.ZPSCT600.PSPID))
+      .join(eban, Seq(TERM_MASTER.EBAN.BANFN, TERM_MASTER.EBAN.BFNPO))
+      .join(mara, Seq(TERM_MASTER.MARA.MATNR))
   }
 }

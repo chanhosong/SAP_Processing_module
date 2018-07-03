@@ -30,8 +30,8 @@ class ANL_THD_ZPSCT600_R_INLOCAL(sql: SQLContext) {
     val date = dtu.date
     val time = dtu.time
 
-    val progressShip = tb_THD_ZPDCV6021.where(SQL_MASTER.ZPDCV6021.SQL_COSTAT_N).as("N")
-    val completeShip = tb_THD_ZPDCV6021.where(SQL_MASTER.ZPDCV6021.SQL_COSTAT_Y).as("Y")
+    val progressShip = tb_THD_ZPDCV6021.where(SQL_MASTER.ZPSCT_600.SQL_COSTAT_N).as("N")
+    val completeShip = tb_THD_ZPDCV6021.where(SQL_MASTER.ZPSCT_600.SQL_COSTAT_Y).as("Y")
 
     progressShip.rdd.cartesian(completeShip.rdd)
       .map(e=>

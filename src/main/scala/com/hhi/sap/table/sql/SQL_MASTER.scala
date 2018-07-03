@@ -10,5 +10,5 @@ object SQL_MASTER {
   val QBEW = new SQL_QBEW
   val ZPDCT6023 = new SQL_ZPDCT6023
   val ZPDCT6123 = new SQL_ZPDCT6123
-  val ZPDCV6021 = new SQL_ZPDCV6021
+  val ZPSCT_600 = new SQL_ZPSCT_600
 }

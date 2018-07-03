@@ -15,9 +15,9 @@ import org.slf4j.LoggerFactory
 class ANL_THD_ZPSCT600_R(sql: SQLContext) {
   private val logger = LoggerFactory.getLogger(this.getClass)
 
-  def run(tb_THD_ZPDCV6021: DataFrame, tb_FACTORMASTER: DataFrame): DataFrame = genTable(tb_THD_ZPDCV6021, tb_FACTORMASTER)
+  def run(tb_ZPDCT_600: DataFrame, tb_FACTORMASTER: DataFrame): DataFrame = genTable(tb_ZPDCT_600, tb_FACTORMASTER)
 
-  private def genTable(tb_THD_ZPDCV6021: DataFrame, tb_FACTORMASTER: DataFrame): DataFrame = {
+  private def genTable(tb_ZPDCT_600: DataFrame, tb_FACTORMASTER: DataFrame): DataFrame = {
     import sql.sparkSession.implicits._
 
     var PGMID = "Spark2.3.0.cloudera2"
@@ -32,8 +32,8 @@ class ANL_THD_ZPSCT600_R(sql: SQLContext) {
     val date = dtu.date
     val time = dtu.time
 
-    val progressShip = tb_THD_ZPDCV6021.where(SQL_MASTER.ZPDCV6021.SQL_COSTAT_N)
-    val completeShip = tb_THD_ZPDCV6021.where(SQL_MASTER.ZPDCV6021.SQL_COSTAT_Y)
+    val progressShip = tb_ZPDCT_600.where(SQL_MASTER.ZPSCT_600.SQL_COSTAT_N)
+    val completeShip = tb_ZPDCT_600.where(SQL_MASTER.ZPSCT_600.SQL_COSTAT_Y)
 
     val factorMaster = tb_FACTORMASTER.collect().clone()
 
