@@ -1,7 +1,7 @@
 package com.hhi.sap.analysis
 
 import com.hhi.sap.main.SparkSessionTestWrapper
-import com.hhi.sap.table.term.{TERM_EBAN, TERM_MARA, TERM_ZPDCT6123}
+import com.hhi.sap.table.term.TERM_MASTER
 import com.hhi.sap.utils.SparkFileReader
 import org.scalatest.FlatSpec
 import org.slf4j.LoggerFactory
@@ -22,10 +22,10 @@ class ANL_ZPDCT6123Test extends FlatSpec with SparkSessionTestWrapper{
   }
 
   "ZPDCT6123 " should "make dataframe." in new SparkFileReader {
-    val ZPDCT6123 = getFolder(OUTPUTPATH+FILENPATH_ZPDCT6123).withColumnRenamed("bnfpo".toUpperCase(), TERM_ZPDCT6123.BFNPO).withColumnRenamed("zkvndcod".toUpperCase(), TERM_ZPDCT6123.ZKGVNDCOD)
-    val eban = getFolder(OUTPUTPATH+FILEPATH_EBAN).withColumnRenamed("bnfpo".toUpperCase(), TERM_EBAN.BFNPO)
+    val ZPDCT6123 = getFolder(OUTPUTPATH+FILENPATH_ZPDCT6123).withColumnRenamed("bnfpo".toUpperCase(), TERM_MASTER.ZPDCT6123.BFNPO).withColumnRenamed("zkvndcod".toUpperCase(), TERM_MASTER.ZPDCT6123.ZKGVNDCOD)
+    val eban = getFolder(OUTPUTPATH+FILEPATH_EBAN).withColumnRenamed("bnfpo".toUpperCase(), TERM_MASTER.EBAN.BFNPO)
     val mara = getFolder(OUTPUTPATH+FILEPATH_MARA)
 
-    new ANL_ZPDCT6123(ss.sqlContext).run(ZPDCT6123, eban.select(TERM_EBAN.BANFN, TERM_EBAN.BFNPO, TERM_EBAN.LGORT, TERM_EBAN.PAINTGBN), mara.select(TERM_MARA.MATNR, TERM_MARA.ZZMGROUP)).show(100)
+    new ANL_ZPDCT6123(ss.sqlContext).run(ZPDCT6123, eban.select(TERM_MASTER.EBAN.BANFN, TERM_MASTER.EBAN.BFNPO, TERM_MASTER.EBAN.LGORT, TERM_MASTER.EBAN.PAINTGBN), mara.select(TERM_MASTER.MARA.MATNR, TERM_MASTER.MARA.ZZMGROUP)).show(100)
   }
 }

@@ -1,7 +1,7 @@
 package com.hhi.sap.analysis
 
 import com.hhi.sap.main.SparkSessionTestWrapper
-import com.hhi.sap.table.term.TERM_ZPSCT600_R
+import com.hhi.sap.table.term.TERM_MASTER
 import com.hhi.sap.utils.SparkFileReader
 import org.apache.spark.sql.expressions.Window
 import org.apache.spark.sql.functions._
@@ -27,8 +27,8 @@ class ANL_THD_ZPSCT600_RTest extends FlatSpec with SparkSessionTestWrapper{
 
   "Similarity csv file" should "be correctly matched the SERNO and RANKING." in new SparkFileReader {
     ss.read.option("header", "true").csv(OUTPUTPATH+TABLE1)
-      .withColumn(TERM_ZPSCT600_R.SERNO, row_number().over(Window.partitionBy(TERM_ZPSCT600_R.PSPID).orderBy(TERM_ZPSCT600_R.PSPID_A)))
-      .withColumn(TERM_ZPSCT600_R.RANKING, rank().over(Window.partitionBy(TERM_ZPSCT600_R.PSPID).orderBy(TERM_ZPSCT600_R.RANK_RATE)))
+      .withColumn(TERM_MASTER.ZPSCT600_R.SERNO, row_number().over(Window.partitionBy(TERM_MASTER.ZPSCT600_R.PSPID).orderBy(TERM_MASTER.ZPSCT600_R.PSPID_A)))
+      .withColumn(TERM_MASTER.ZPSCT600_R.RANKING, rank().over(Window.partitionBy(TERM_MASTER.ZPSCT600_R.PSPID).orderBy(TERM_MASTER.ZPSCT600_R.RANK_RATE)))
       .coalesce(1)
       .write.option("header", "true").csv(OUTPUTPATH+TABLE2)
   }
