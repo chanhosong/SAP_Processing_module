@@ -44,4 +44,5 @@ class TERM_THD_MRPL_WEEK {
   val PGMID = "pgmid"
   val CNAM = "cnam"
   val CDAT = "cdat"
+  val CTIM = "ctim"
 }

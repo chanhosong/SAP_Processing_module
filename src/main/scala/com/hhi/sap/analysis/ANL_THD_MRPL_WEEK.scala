@@ -1,6 +1,8 @@
 package com.hhi.sap.analysis
 
 import com.hhi.sap.config.DateTimeUtil
+import com.hhi.sap.table.bean.BEAN_THD_MRPL_WEEK
+import com.hhi.sap.table.term.TERM_MASTER
 import org.apache.spark.sql.{DataFrame, SQLContext}
 import org.slf4j.LoggerFactory
 
@@ -24,6 +26,50 @@ class ANL_THD_MRPL_WEEK(sql: SQLContext) {
     val date = dtu.date
     val time = dtu.time
 
-    zpdct6023//TODO
+    zpdct6023.rdd.map(e=>{
+      BEAN_THD_MRPL_WEEK(
+        e.getAs(TERM_MASTER.MRPL_WEEK.COMPANYID),
+        e.getAs(TERM_MASTER.MRPL_WEEK.SAUPBU),
+        e.getAs(TERM_MASTER.MRPL_WEEK.PSPID),
+        e.getAs(TERM_MASTER.MRPL_WEEK.SERNO),
+        e.getAs(TERM_MASTER.MRPL_WEEK.STG_GUBUN),
+        e.getAs(TERM_MASTER.MRPL_WEEK.MAT_GUBUN),
+        e.getAs(TERM_MASTER.MRPL_WEEK.WCM5),
+        e.getAs(TERM_MASTER.MRPL_WEEK.WCM4),
+        e.getAs(TERM_MASTER.MRPL_WEEK.WCM3),
+        e.getAs(TERM_MASTER.MRPL_WEEK.WCM2),
+        e.getAs(TERM_MASTER.MRPL_WEEK.WCM1),
+        e.getAs(TERM_MASTER.MRPL_WEEK.WC),
+        e.getAs(TERM_MASTER.MRPL_WEEK.WCP1),
+        e.getAs(TERM_MASTER.MRPL_WEEK.WCP2),
+        e.getAs(TERM_MASTER.MRPL_WEEK.WCP3),
+        e.getAs(TERM_MASTER.MRPL_WEEK.WCP4),
+        e.getAs(TERM_MASTER.MRPL_WEEK.WCP5),
+        e.getAs(TERM_MASTER.MRPL_WEEK.WCP6),
+        e.getAs(TERM_MASTER.MRPL_WEEK.WCP7),
+        e.getAs(TERM_MASTER.MRPL_WEEK.WCP8),
+        e.getAs(TERM_MASTER.MRPL_WEEK.WCP9),
+        e.getAs(TERM_MASTER.MRPL_WEEK.WCP10),
+        e.getAs(TERM_MASTER.MRPL_WEEK.WCP11),
+        e.getAs(TERM_MASTER.MRPL_WEEK.WCP12),
+        e.getAs(TERM_MASTER.MRPL_WEEK.WCP13),
+        e.getAs(TERM_MASTER.MRPL_WEEK.WCP14),
+        e.getAs(TERM_MASTER.MRPL_WEEK.WCP15),
+        e.getAs(TERM_MASTER.MRPL_WEEK.WCP16),
+        e.getAs(TERM_MASTER.MRPL_WEEK.WCP17),
+        e.getAs(TERM_MASTER.MRPL_WEEK.WCP18),
+        e.getAs(TERM_MASTER.MRPL_WEEK.WCP19),
+        e.getAs(TERM_MASTER.MRPL_WEEK.WCP20),
+        e.getAs(TERM_MASTER.MRPL_WEEK.WCP21),
+        e.getAs(TERM_MASTER.MRPL_WEEK.WCP22),
+        e.getAs(TERM_MASTER.MRPL_WEEK.WCP23),
+        e.getAs(TERM_MASTER.MRPL_WEEK.WCP24),
+        e.getAs(TERM_MASTER.MRPL_WEEK.WCP25),
+        e.getAs(TERM_MASTER.MRPL_WEEK.PGMID),
+        e.getAs(TERM_MASTER.MRPL_WEEK.CNAM),
+        e.getAs(TERM_MASTER.MRPL_WEEK.CDAT),
+        e.getAs(TERM_MASTER.MRPL_WEEK.CTIM)
+      )
+    })
   }
 }
