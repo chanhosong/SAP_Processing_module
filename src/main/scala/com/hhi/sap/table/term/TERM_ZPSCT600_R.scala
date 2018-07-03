@@ -1,0 +1,33 @@
+package com.hhi.sap.table.term
+
+class TERM_ZPSCT600_R {
+  val DATABASE = "sap".toUpperCase()
+  val TABLE = s"$DATABASE.zpsct600_r".toUpperCase()
+
+  val COMPANYID = "companyid".toUpperCase()
+  val SAUPBU = "saupbu".toUpperCase()
+  val PSPID = "pspid".toUpperCase()
+  val SERNO = "serno".toUpperCase()
+  val SHIP_KIND_A = "ship_kind_a".toUpperCase()
+  val SHIP_TYPE_1_A = "ship_type_1_a".toUpperCase()
+  val DOCK_A = "dock_a".toUpperCase()
+  val BTYPE_A = "btype_a".toUpperCase()
+  val DUR_AND_A = "dur_and_a".toUpperCase()
+  val D1_ND_A = "d1_nd_a".toUpperCase()
+  val D2_ND_A = "d2_nd_a".toUpperCase()
+  val D3_ND_A = "d3_nd_a".toUpperCase()
+  val DUR_QND_A = "dur_qnd_a".toUpperCase()
+  val CNTR_A = "cntr_a".toUpperCase()
+  val DWT_SC_A = "dwt_sc_a".toUpperCase()
+  val WEIGT_PR_A = "weigt_pr_a".toUpperCase()
+  val WEIGT_BB_A = "weigt_bb_a".toUpperCase()
+  val WEIGT_LD_A = "weigt_ld_a".toUpperCase()
+  val WC_A = "wc_a".toUpperCase()
+  val PSPID_A = "pspid_a".toUpperCase()
+  val RANKING = "ranking".toUpperCase()
+  val RANK_RATE = "rank_rate".toUpperCase()
+  val PGMID = "pgmid".toUpperCase()
+  val CNAM = "cnam".toUpperCase()
+  val CDAT = "cdat".toUpperCase()
+  val CTIM = "ctim".toUpperCase()
+}

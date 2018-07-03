@@ -1,0 +1,13 @@
+package com.hhi.sap.table.sql
+
+import com.hhi.sap.table.term.TERM_MASTER
+
+class SQL_FACTORMASTER {
+  private val TMM_FACTOR_MASTER = TERM_MASTER.FACTOR.TABLE
+  private val COMPANYID_VAL = "HA"
+  private val SAUPBU_VAL = "C"
+  private val ZLAST_VAL = "X"
+
+  val SQL_INQUIRE_FACTOR = s"SELECT * FROM $TMM_FACTOR_MASTER WHERE COMPANYID = '$COMPANYID_VAL' AND SAUPBU = '$SAUPBU_VAL' AND ZLAST = '$ZLAST_VAL'"
+  val SQL_INQUIRE_FACTOR_WHERE = s"COMPANYID = '$COMPANYID_VAL' AND SAUPBU = '$SAUPBU_VAL' AND ZLAST = '$ZLAST_VAL'"
+}

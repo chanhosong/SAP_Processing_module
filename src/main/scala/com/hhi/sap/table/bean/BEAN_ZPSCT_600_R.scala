@@ -1,0 +1,3 @@
+package com.hhi.sap.table.bean
+
+case class BEAN_ZPSCT_600_R(COMPANYID: String, SAUPBU: String, PSPID: String/*, SERNO: String*/, SHIP_KIND_A: String, SHIP_TYPE_1_A: String, DOCK_A: String, BTYPE_A: String, DUR_AND_A: String, D1_ND_A: String, D2_ND_A: String, D3_ND_A: String, DUR_QND_A: String, CNTR_A: String, DWT_SC_A: String, WEIGT_PR_A: String, WEIGT_BB_A: String, WEIGT_LD_A: String, WC_A: String, PSPID_A: String/*, RANKING: String*/, RANK_RATE: String, PGMID: String, CNAM: String, CDAT: String, CTIM: String)

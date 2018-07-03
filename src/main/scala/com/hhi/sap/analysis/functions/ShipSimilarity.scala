@@ -1,0 +1,84 @@
+package com.hhi.sap.analysis.functions
+
+import com.hhi.sap.table.term.{TERM_FACTORMASTER, TERM_ZPSCT600}
+import org.apache.spark.sql.Row
+import org.slf4j.LoggerFactory
+
+object ShipSimilarity{
+  private val logger = LoggerFactory.getLogger(this.getClass)
+
+  private val PT = 100.0
+
+  private val FACTOR_RATE = "factor_rate"
+  private val MATCH_FAIL_RATE = "match_fail_rate"
+  private val SPECIAL_SHIP = "cn"
+
+  def getSimilarity(factorMaster: Seq[Row], ds1: Row, ds2: Row): Double = factorMaster.map(e=>compareCases(e,ds1,ds2)).sum
+
+  private def compareCases(factor: Row, ds1: Row, ds2: Row): Double = {
+    factor.getAs(TERM_FACTORMASTER.FACTOR_SEQ).toString.trim match {
+      case "01" => compareEqualsShip(TERM_ZPSCT600.SHIP_KIND, ds1, ds2, factor)
+      case "02" => compareEqualsShip(TERM_ZPSCT600.SHIP_TYPE_1, ds1, ds2, factor)
+      case "03" => compareEqualsShip(TERM_ZPSCT600.DOCK, ds1, ds2, factor)
+      case "04" => compareEqualsShip(TERM_ZPSCT600.BTYPE, ds1, ds2, factor)
+      case "05" => compareDuration(TERM_ZPSCT600.DUR_AND, ds1, ds2, factor)
+      case "06" => compareDuration(TERM_ZPSCT600.D1_ND, ds1, ds2, factor)
+      case "07" => compareDuration(TERM_ZPSCT600.D2_ND, ds1, ds2, factor)
+      case "08" => compareDuration(TERM_ZPSCT600.D3_ND, ds1, ds2, factor)
+      case "09" => compareDuration(TERM_ZPSCT600.DUR_QND, ds1, ds2, factor)
+      case "10" => compareEqualsShipSpec(TERM_ZPSCT600.SHIP_KIND, ds1, ds2, factor)
+      case "11" => compareWeight(TERM_ZPSCT600.WEIGT_PR, ds1, ds2, factor)
+      case "12" => compareWeight(TERM_ZPSCT600.WEIGT_BB, ds1, ds2, factor)
+      case "13" => compareWeight(TERM_ZPSCT600.WEIGT_LD, ds1, ds2, factor)
+    }
+  }
+
+  private def compareEqualsShip(cps: String, c1: Row, c2: Row, factor: Row): Double = {
+    if (c1.getAs(cps).toString == c2.getAs(cps).toString){
+      Integer.parseInt(factor.getAs(FACTOR_RATE))
+    } else {
+      getFactor(factor.getAs(FACTOR_RATE), factor.getAs(MATCH_FAIL_RATE) , PT)
+    }
+  }
+
+  private def compareEqualsShipSpec(cps: String, r1: Row, r2: Row, factor: Row): Double = {
+    val shipKind = r1.getAs(cps).toString
+
+    if (shipKind == r2.getAs(cps)){
+      shipKind.toString match {
+        case SPECIAL_SHIP => compareVolume(TERM_ZPSCT600.CNTR , r1, r2, factor)
+        case _ => compareVolume(TERM_ZPSCT600.DWT_SC, r1, r2, factor)
+      }
+    } else {
+      getFactor(factor.getAs(FACTOR_RATE), factor.getAs(MATCH_FAIL_RATE) , PT)
+    }
+  }
+
+  private def compareDuration(cps: String, r1: Row, r2: Row, factor: Row): Double = {
+    ((r1.getAs(cps): String).trim.toInt - (r2.getAs(cps): String).trim.toInt).abs match {
+      case x if 0 until 10 contains x => getFactor(factor.getAs(FACTOR_RATE), factor.getAs(TERM_FACTORMASTER.MATCH01), PT)
+      case x if 11 until 30 contains x => getFactor(factor.getAs(FACTOR_RATE), factor.getAs(TERM_FACTORMASTER.MATCH02), PT)
+      case x if 31 until 50 contains x => getFactor(factor.getAs(FACTOR_RATE), factor.getAs(TERM_FACTORMASTER.MATCH03), PT)
+      case _ => getFactor(factor.getAs(FACTOR_RATE), factor.getAs(TERM_FACTORMASTER.MATCH04), PT)
+    }
+  }
+
+  private def compareWeight(cps: String, r1: Row, r2: Row, factor: Row): Double = {
+    (r1.getAs(cps).toString.toDouble - r2.getAs(cps).toString.toDouble).abs match {
+      case x if 0 until 1000 contains x => getFactor(factor.getAs(FACTOR_RATE), factor.getAs(TERM_FACTORMASTER.MATCH01), PT)
+      case x if 1001 until 3000 contains x => getFactor(factor.getAs(FACTOR_RATE), factor.getAs(TERM_FACTORMASTER.MATCH02), PT)
+      case x if 3001 until 5000 contains x => getFactor(factor.getAs(FACTOR_RATE), factor.getAs(TERM_FACTORMASTER.MATCH03), PT)
+      case _ => getFactor(factor.getAs(FACTOR_RATE), factor.getAs(TERM_FACTORMASTER.MATCH04), PT)
+    }
+  }
+
+  private def compareVolume(cps: String, r1: Row, r2: Row, factor: Row): Double = {
+    (r1.getAs(cps).toString.toDouble - r2.getAs(cps).toString.toDouble).abs match {
+      case x if 0 until 500 contains x => getFactor(factor.getAs(FACTOR_RATE), factor.getAs(TERM_FACTORMASTER.MATCH01), PT)
+      case x if 501 until 1000 contains x => getFactor(factor.getAs(FACTOR_RATE), factor.getAs(TERM_FACTORMASTER.MATCH02), PT)
+      case _ => getFactor(factor.getAs(FACTOR_RATE), factor.getAs(TERM_FACTORMASTER.MATCH04), PT)
+    }
+  }
+
+  private def getFactor(f1: String, f2: String, f3: Double): Double = Integer.parseInt(f1) * Integer.parseInt(f2) / f3
+}
