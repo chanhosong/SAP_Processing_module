@@ -70,6 +70,6 @@ class ANL_THD_MRPL_WEEK(sql: SQLContext) {
         e.getAs(TERM_MASTER.MRPL_WEEK.CDAT),
         e.getAs(TERM_MASTER.MRPL_WEEK.CTIM)
       )
-    })
+    }).toDF()
   }
 }
