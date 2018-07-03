@@ -24,7 +24,7 @@ class ANL_THD_MRPL_WEEK(sql: SQLContext) {
       PGMID = "[DEBUGMODE]Spark2.3.0.cloudera2"
       CNAM = "[DEBUGMODE]A504863"
     }
-    val dtu = new DateTimeUtil()
+    val dtu = DateTimeUtil
 
     val date = dtu.date
     val time = dtu.time

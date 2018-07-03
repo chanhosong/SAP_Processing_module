@@ -15,13 +15,6 @@ class ANL_ZPDCT6023(sql: SQLContext) {
   private def genTable(tb_ZPDCT6023: DataFrame, eban: DataFrame, mara: DataFrame): DataFrame = {
     import sql.sparkSession.implicits._
 
-    val dtu = new DateTimeUtil()
-
-    val weekNumber = dtu.weekNumber
-    val monthNumber = dtu.monthNumber
-    val date = dtu.date
-    val time = dtu.time
-
     var PGMID = "Spark2.3.0.cloudera2"
     var CNAM = "A504863"
 
@@ -60,14 +53,14 @@ class ANL_ZPDCT6023(sql: SQLContext) {
           e.getAs(TERM_MASTER.ZPDCT6023.ZPTMR),
           e.getAs(TERM_MASTER.ZPDCT6023.ZMRPL),
           e.getAs(TERM_MASTER.ZPDCT6023.WERKS),
-          dtu.getWeekDifference(TERM_MASTER.ZPDCT6123.ZEXDATE, TERM_MASTER.ZPSCT600.WC).toString,
-          dtu.getMonthDifference(TERM_MASTER.ZPDCT6123.ZEXDATE, TERM_MASTER.ZPSCT600.WC).toString,
+          DateTimeUtil.getWeekDifference(e.getAs(TERM_MASTER.ZPDCT6123.ZEXDATE), e.getAs(TERM_MASTER.ZPSCT600.WC)).toString,
+          DateTimeUtil.getMonthDifference(e.getAs(TERM_MASTER.ZPDCT6123.ZEXDATE), e.getAs(TERM_MASTER.ZPSCT600.WC)).toString,
           ProcessClassification.getSTG_GUBUN(e.getAs(TERM_MASTER.ZPDCT6023.ZMIDACTNO), e.getAs(TERM_MASTER.ZPDCT6023.ZHDRMATNR)),
           ProcessClassification.getMAT_GUBUN(e.getAs(TERM_MASTER.ZPDCT6023.ZMIDACTNO), e.getAs(TERM_MASTER.EBAN.LGORT), e.getAs(TERM_MASTER.EBAN.PAINTGBN), e.getAs(TERM_MASTER.MARA.ZZMGROUP)),
           PGMID,
           CNAM,
-          date,
-          time
+          DateTimeUtil.date,
+          DateTimeUtil.time
         )
       ).toDF
   }

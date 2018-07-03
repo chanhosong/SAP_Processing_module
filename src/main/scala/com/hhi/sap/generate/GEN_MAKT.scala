@@ -19,10 +19,6 @@ class GEN_MAKT(sql: SQLContext) {
       PGMID = "[DEBUGMODE]Spark2.3.0.cloudera2"
       CNAM = "[DEBUGMODE]A504863"
     }
-    val dtu = new DateTimeUtil()
-
-    val date = dtu.date
-    val time = dtu.time
 
     makt.rdd.map(e=>{
       BEAN_MAKT(
@@ -32,8 +28,8 @@ class GEN_MAKT(sql: SQLContext) {
         e.getAs(TERM_MASTER.MAKT.MAKTX),
         PGMID,
         CNAM,
-        date,
-        time
+        DateTimeUtil.date,
+        DateTimeUtil.time
       )
     }).toDF()
   }

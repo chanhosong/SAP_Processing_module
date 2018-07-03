@@ -19,10 +19,6 @@ class GEN_QBEW(sql: SQLContext) {
       PGMID = "[DEBUGMODE]Spark2.3.0.cloudera2"
       CNAM = "[DEBUGMODE]A504863"
     }
-    val dtu = new DateTimeUtil()
-
-    val date = dtu.date
-    val time = dtu.time
 
     qbew.rdd.map(e=>{
       BEAN_QBEW(
@@ -36,8 +32,8 @@ class GEN_QBEW(sql: SQLContext) {
         e.getAs(TERM_MASTER.QBEW.PEINH),
         PGMID,
         CNAM,
-        date,
-        time
+        DateTimeUtil.date,
+        DateTimeUtil.time
       )
     }).toDF()
   }

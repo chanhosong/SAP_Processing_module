@@ -19,10 +19,6 @@ class GEN_MARC(sql: SQLContext) {
       PGMID = "[DEBUGMODE]Spark2.3.0.cloudera2"
       CNAM = "[DEBUGMODE]A504863"
     }
-    val dtu = new DateTimeUtil()
-
-    val date = dtu.date
-    val time = dtu.time
 
     marc.rdd.map(e=>{
       BEAN_MARC(
@@ -35,8 +31,8 @@ class GEN_MARC(sql: SQLContext) {
         e.getAs(TERM_MASTER.MARC.SBDKZ),
         PGMID,
         CNAM,
-        date,
-        time
+        DateTimeUtil.date,
+        DateTimeUtil.time
       )
     }).toDF()
   }

@@ -25,10 +25,9 @@ class ANL_THD_ZPSCT600_R_INLOCAL(sql: SQLContext) {
       PGMID = "[DEBUGMODE]Spark2.3.0.cloudera2"
       CNAM = "[DEBUGMODE]A504863"
     }
-    val dtu = new DateTimeUtil()
 
-    val date = dtu.date
-    val time = dtu.time
+    val date = DateTimeUtil.date
+    val time = DateTimeUtil.time
 
     val progressShip = tb_THD_ZPDCV6021.where(SQL_MASTER.ZPSCT_600.SQL_COSTAT_N).as("N")
     val completeShip = tb_THD_ZPDCV6021.where(SQL_MASTER.ZPSCT_600.SQL_COSTAT_Y).as("Y")

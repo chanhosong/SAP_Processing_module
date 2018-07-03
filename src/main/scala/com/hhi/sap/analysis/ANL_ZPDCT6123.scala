@@ -10,15 +10,10 @@ import org.slf4j.LoggerFactory
 class ANL_ZPDCT6123(sql: SQLContext) {
   private val logger = LoggerFactory.getLogger(this.getClass)
 
-  def run(tb_ZPDCT6123: DataFrame, tb_ZPSCT_600: DataFrame, eban: DataFrame, mara: DataFrame): DataFrame = genTable(tb_ZPDCT6123, tb_ZPSCT_600,eban, mara)
+  def run(tb_ZPDCT6123: DataFrame, tb_ZPSCT_600: DataFrame, eban: DataFrame, mara: DataFrame): DataFrame = genTable(tb_ZPDCT6123, tb_ZPSCT_600, eban, mara)
 
   private def genTable(tb_ZPDCT6123: DataFrame, tb_ZPSCT_600: DataFrame, eban: DataFrame, mara: DataFrame): DataFrame = {
     import sql.sparkSession.implicits._
-
-    val dtu = new DateTimeUtil()
-
-    val date = dtu.date
-    val time = dtu.time
 
     var PGMID = "Spark2.3.0.cloudera2"
     var CNAM = "A504863"
@@ -54,14 +49,14 @@ class ANL_ZPDCT6123(sql: SQLContext) {
           e.getAs(TERM_MASTER.ZPDCT6123.WERKS),
           e.getAs(TERM_MASTER.ZPDCT6123.ZFROMSYS),
           e.getAs(TERM_MASTER.ZPDCT6123.ZPTMR),
-          dtu.getWeekDifference(TERM_MASTER.ZPDCT6123.ZEXDATE, TERM_MASTER.ZPSCT600.WC).toString,
-          dtu.getMonthDifference(TERM_MASTER.ZPDCT6123.ZEXDATE, TERM_MASTER.ZPSCT600.WC).toString,
+          DateTimeUtil.getWeekDifference(e.getAs(TERM_MASTER.ZPDCT6123.ZEXDATE), e.getAs(TERM_MASTER.ZPSCT600.WC)).toString,
+          DateTimeUtil.getMonthDifference(e.getAs(TERM_MASTER.ZPDCT6123.ZEXDATE), e.getAs(TERM_MASTER.ZPSCT600.WC)).toString,
           ProcessClassification.getSTG_GUBUN(e.getAs(TERM_MASTER.ZPDCT6123.ZMIDACTNO), e.getAs(TERM_MASTER.ZPDCT6123.ZHDRMATNR)),
           ProcessClassification.getMAT_GUBUN(e.getAs(TERM_MASTER.ZPDCT6123.ZMIDACTNO), e.getAs(TERM_MASTER.EBAN.LGORT), e.getAs(TERM_MASTER.EBAN.PAINTGBN), e.getAs(TERM_MASTER.MARA.ZZMGROUP)),
           PGMID,
           CNAM,
-          date,
-          time
+          DateTimeUtil.date,
+          DateTimeUtil.time
         )
     ).toDF
   }

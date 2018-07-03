@@ -3,7 +3,7 @@ package com.hhi.sap.config
 import java.text.SimpleDateFormat
 import java.util.{Calendar, Date}
 
-class DateTimeUtil {
+object DateTimeUtil {
   private val dateFormat = "yyyy-MM-dd"
   private val timeFormat = "HH:mm:ss"
   private val dateSDF = new SimpleDateFormat(dateFormat)

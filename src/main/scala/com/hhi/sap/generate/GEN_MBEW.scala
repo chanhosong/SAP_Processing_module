@@ -19,10 +19,9 @@ class GEN_MBEW(sql: SQLContext) {
       PGMID = "[DEBUGMODE]Spark2.3.0.cloudera2"
       CNAM = "[DEBUGMODE]A504863"
     }
-    val dtu = new DateTimeUtil()
 
-    val date = dtu.date
-    val time = dtu.time
+    val date = DateTimeUtil.date
+    val time = DateTimeUtil.time
 
     mbew.rdd.map(e=>{
       BEAN_MBEW(

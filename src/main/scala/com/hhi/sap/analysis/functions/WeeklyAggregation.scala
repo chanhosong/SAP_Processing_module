@@ -4,6 +4,6 @@ import org.apache.spark.sql.DataFrame
 
 object WeeklyAggregation {
   def getAggregation(zpdct6023: DataFrame): DataFrame = {
-    zpdct6023.
+    zpdct6023
   }
 }
