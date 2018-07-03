@@ -4,8 +4,8 @@ import java.text.SimpleDateFormat
 import java.util.{Calendar, Date}
 
 object DateTimeUtil {
-  private val dateFormat = "yyyy-MM-dd"
-  private val timeFormat = "HH:mm:ss"
+  private val dateFormat = "yyyyMMdd"
+  private val timeFormat = "HHmmss"
   private val dateSDF = new SimpleDateFormat(dateFormat)
   private val timeSDF = new SimpleDateFormat(timeFormat)
 
