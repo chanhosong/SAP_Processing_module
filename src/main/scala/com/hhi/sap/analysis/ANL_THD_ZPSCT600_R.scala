@@ -1,7 +1,5 @@
 package com.hhi.sap.analysis
 
-import java.util.Calendar
-
 import com.hhi.sap.analysis.functions.ShipSimilarity
 import com.hhi.sap.config.DateTimeUtil
 import com.hhi.sap.table.bean.BEAN_ZPSCT_600_R
@@ -34,7 +32,7 @@ class ANL_THD_ZPSCT600_R(sql: SQLContext) {
     val progressShip = tb_ZPDCT_600.where(SQL_MASTER.ZPSCT_600.SQL_COSTAT_N)
     val completeShip = tb_ZPDCT_600.where(SQL_MASTER.ZPSCT_600.SQL_COSTAT_Y)
 
-    val factorMaster = tb_FACTORMASTER.collect().clone()
+    val factorMaster = tb_FACTORMASTER.collect()
 
     progressShip.rdd.cartesian(completeShip.rdd)
       .map(e=>
@@ -61,10 +59,10 @@ class ANL_THD_ZPSCT600_R(sql: SQLContext) {
           ShipSimilarity.getSimilarity(factorMaster, e._1,e._2).toString,
           PGMID,
           CNAM,
-          date.format(Calendar.getInstance().getTime),
-          time.format(Calendar.getInstance().getTime))
-      )
-      .toDF()
+          DateTimeUtil.date,
+          DateTimeUtil.time
+        )
+      ).toDF()
       .withColumn(TERM_MASTER.ZPSCT600_R.SERNO, row_number().over(Window.partitionBy(TERM_MASTER.ZPSCT600_R.PSPID).orderBy(TERM_MASTER.ZPSCT600_R.PSPID_A)))
       .withColumn(TERM_MASTER.ZPSCT600_R.RANKING, rank().over(Window.partitionBy(TERM_MASTER.ZPSCT600_R.PSPID).orderBy(TERM_MASTER.ZPSCT600_R.RANK_RATE)))
   }
