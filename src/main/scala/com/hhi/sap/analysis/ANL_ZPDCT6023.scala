@@ -10,9 +10,9 @@ import org.slf4j.LoggerFactory
 class ANL_ZPDCT6023(sql: SQLContext) {
   private val logger = LoggerFactory.getLogger(this.getClass)
 
-  def run(tb_ZPDCT6023: DataFrame, eban: DataFrame, mara: DataFrame): DataFrame = genTable(tb_ZPDCT6023, eban, mara)
+  def run(tb_ZPDCT6023: DataFrame, tb_ZPSCT_600: DataFrame, eban: DataFrame, mara: DataFrame): DataFrame = genTable(tb_ZPDCT6023, tb_ZPSCT_600, eban, mara)
 
-  private def genTable(tb_ZPDCT6023: DataFrame, eban: DataFrame, mara: DataFrame): DataFrame = {
+  private def genTable(tb_ZPDCT6023: DataFrame, tb_ZPSCT_600: DataFrame, eban: DataFrame, mara: DataFrame): DataFrame = {
     import sql.sparkSession.implicits._
 
     var PGMID = "Spark2.3.0.cloudera2"
@@ -23,7 +23,7 @@ class ANL_ZPDCT6023(sql: SQLContext) {
       CNAM = "[DEBUGMODE]A504863"
     }
 
-    loadTable(tb_ZPDCT6023, eban, mara).rdd
+    loadTable(tb_ZPDCT6023, tb_ZPSCT_600, eban, mara).rdd
       .map(e=>
         BEAN_ZPDCT6023(
           e.getAs(TERM_MASTER.ZPDCT6023.COMPANYID),
@@ -53,8 +53,8 @@ class ANL_ZPDCT6023(sql: SQLContext) {
           e.getAs(TERM_MASTER.ZPDCT6023.ZPTMR),
           e.getAs(TERM_MASTER.ZPDCT6023.ZMRPL),
           e.getAs(TERM_MASTER.ZPDCT6023.WERKS),
-          DateTimeUtil.getWeekDifference(e.getAs(TERM_MASTER.ZPDCT6123.ZEXDATE), e.getAs(TERM_MASTER.ZPSCT600.WC)).toString,
-          DateTimeUtil.getMonthDifference(e.getAs(TERM_MASTER.ZPDCT6123.ZEXDATE), e.getAs(TERM_MASTER.ZPSCT600.WC)).toString,
+          DateTimeUtil.getWeekDifference(e.getAs(TERM_MASTER.ZPDCT6023.ZCNFDATE), e.getAs(TERM_MASTER.ZPSCT600.WC)).toString,
+          DateTimeUtil.getMonthDifference(e.getAs(TERM_MASTER.ZPDCT6023.ZCNFDATE), e.getAs(TERM_MASTER.ZPSCT600.WC)).toString,
           ProcessClassification.getSTG_GUBUN(e.getAs(TERM_MASTER.ZPDCT6023.ZMIDACTNO), e.getAs(TERM_MASTER.ZPDCT6023.ZHDRMATNR)),
           ProcessClassification.getMAT_GUBUN(e.getAs(TERM_MASTER.ZPDCT6023.ZMIDACTNO), e.getAs(TERM_MASTER.EBAN.LGORT), e.getAs(TERM_MASTER.EBAN.PAINTGBN), e.getAs(TERM_MASTER.MARA.ZZMGROUP)),
           PGMID,
@@ -65,7 +65,7 @@ class ANL_ZPDCT6023(sql: SQLContext) {
       ).toDF
   }
 
-  private def loadTable(tb_ZPDCT6023: DataFrame, eban: DataFrame, mara: DataFrame): DataFrame = {
+  private def loadTable(tb_ZPDCT6023: DataFrame, tb_ZPSCT_600: DataFrame, eban: DataFrame, mara: DataFrame): DataFrame = {
 
     tb_ZPDCT6023.select(
       TERM_MASTER.ZPDCT6023.COMPANYID,
@@ -91,7 +91,12 @@ class ANL_ZPDCT6023(sql: SQLContext) {
       TERM_MASTER.ZPDCT6023.BANFN,
       TERM_MASTER.ZPDCT6023.BFNPO,
       TERM_MASTER.ZPDCT6023.ZCNFDATE,
-      TERM_MASTER.ZPDCT6023.ZFROMSYS
-    ).join(eban, Seq(TERM_MASTER.EBAN.BANFN, TERM_MASTER.EBAN.BFNPO)).join(mara, Seq(TERM_MASTER.MARA.MATNR))
+      TERM_MASTER.ZPDCT6023.ZFROMSYS,
+      TERM_MASTER.ZPDCT6023.ZPTMR,
+      TERM_MASTER.ZPDCT6023.ZMRPL,
+      TERM_MASTER.ZPDCT6023.WERKS
+    ).join(tb_ZPSCT_600, Seq(TERM_MASTER.ZPSCT600.COMPANYID, TERM_MASTER.ZPSCT600.SAUPBU, TERM_MASTER.ZPSCT600.PSPID))
+      .join(eban, Seq(TERM_MASTER.EBAN.COMPANYID, TERM_MASTER.EBAN.SAUPBU, TERM_MASTER.EBAN.BANFN, TERM_MASTER.EBAN.BFNPO))
+      .join(mara, Seq(TERM_MASTER.MARA.COMPANYID, TERM_MASTER.MARA.SAUPBU, TERM_MASTER.MARA.MATNR))
   }
 }
