@@ -8,7 +8,7 @@ import org.apache.spark.sql.DataFrame
 
 object FactorMasterTableFromLocal extends SparkSessionWrapper{
   val FILENAME = "/FACTOR/factor_master.csv"
-  def getTable: DataFrame = ss.read.format("csv").option("header", "true").option("encoding", "EUC-KR").load(FileUtils().files(FILENAME).getPath).where(SQL_MASTER.FACTOR.SQL_INQUIRE_FACTOR)
+  def getTable: DataFrame = ss.read.format("csv").option("header", "true").option("encoding", "EUC-KR").load(FileUtils().files(FILENAME).getPath).where(SQL_MASTER.FACTOR.SQL_INQUIRE_FACTOR_WHERE)
 
   case class FileUtils() {
     def files(fileName: String): URL = {
