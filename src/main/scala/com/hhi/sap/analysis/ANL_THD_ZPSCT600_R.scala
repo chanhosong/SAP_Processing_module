@@ -26,9 +26,6 @@ class ANL_THD_ZPSCT600_R(sql: SQLContext) {
       CNAM = "[DEBUGMODE]A504863"
     }
 
-    val date = DateTimeUtil.date
-    val time = DateTimeUtil.time
-
     val progressShip = tb_ZPDCT_600.where(SQL_MASTER.ZPSCT_600.SQL_COSTAT_N)
     val completeShip = tb_ZPDCT_600.where(SQL_MASTER.ZPSCT_600.SQL_COSTAT_Y)
 
