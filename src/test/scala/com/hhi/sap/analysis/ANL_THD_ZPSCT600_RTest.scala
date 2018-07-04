@@ -25,6 +25,13 @@ class ANL_THD_ZPSCT600_RTest extends FlatSpec with SparkSessionTestWrapper{
       .limit(2000).coalesce(1).write.option("header", "true").csv(OUTPUTPATH+TABLE1)
   }
 
+  "Similarity csv file" should "be added column." in new SparkFileReader {
+    ss.read.option("header", "true").csv(OUTPUTPATH+TABLE1)
+      .withColumn(TERM_MASTER.ZPSCT600_R.SERNO, row_number().over(Window.partitionBy(TERM_MASTER.ZPSCT600_R.PSPID).orderBy(TERM_MASTER.ZPSCT600_R.PSPID_A)))
+      .withColumn(TERM_MASTER.ZPSCT600_R.RANKING, rank().over(Window.partitionBy(TERM_MASTER.ZPSCT600_R.PSPID).orderBy(TERM_MASTER.ZPSCT600_R.RANK_RATE)))
+      .show()
+  }
+
   "Similarity csv file" should "be correctly matched the SERNO and RANKING." in new SparkFileReader {
     ss.read.option("header", "true").csv(OUTPUTPATH+TABLE1)
       .withColumn(TERM_MASTER.ZPSCT600_R.SERNO, row_number().over(Window.partitionBy(TERM_MASTER.ZPSCT600_R.PSPID).orderBy(TERM_MASTER.ZPSCT600_R.PSPID_A)))
