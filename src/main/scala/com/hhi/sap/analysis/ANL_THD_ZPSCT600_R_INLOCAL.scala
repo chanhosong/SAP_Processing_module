@@ -1,10 +1,9 @@
 package com.hhi.sap.analysis
 
-import java.util.Calendar
-
 import com.hhi.sap.analysis.functions.ShipSimilarity_INLOCAL
 import com.hhi.sap.config.DateTimeUtil
 import com.hhi.sap.table.bean.BEAN_ZPSCT_600_R
+import com.hhi.sap.table.factor.FactorMasterTableFromLocal
 import com.hhi.sap.table.sql.SQL_MASTER
 import com.hhi.sap.table.term.TERM_MASTER
 import org.apache.spark.sql.{DataFrame, SQLContext}
@@ -26,8 +25,7 @@ class ANL_THD_ZPSCT600_R_INLOCAL(sql: SQLContext) {
       CNAM = "[DEBUGMODE]A504863"
     }
 
-    val date = DateTimeUtil.date
-    val time = DateTimeUtil.time
+    val factor = FactorMasterTableFromLocal.getTable.collect()
 
     val progressShip = tb_THD_ZPDCV6021.where(SQL_MASTER.ZPSCT_600.SQL_COSTAT_N).as("N")
     val completeShip = tb_THD_ZPDCV6021.where(SQL_MASTER.ZPSCT_600.SQL_COSTAT_Y).as("Y")
@@ -54,15 +52,16 @@ class ANL_THD_ZPSCT600_R_INLOCAL(sql: SQLContext) {
           e._2.getAs(TERM_MASTER.ZPSCT600.WEIGT_LD.toUpperCase()),
           e._2.getAs(TERM_MASTER.ZPSCT600.WC.toUpperCase()),
           e._2.getAs(TERM_MASTER.ZPSCT600.PSPID.toUpperCase()),
-          ShipSimilarity_INLOCAL.getSimilarityFromFile(e._1,e._2).toString,
+          ShipSimilarity_INLOCAL.getSimilarityFromFile(factor, e._1,e._2).toString,
           PGMID,
           CNAM,
-          date.format(Calendar.getInstance().getTime),
-          time.format(Calendar.getInstance().getTime))
+          DateTimeUtil.date,
+          DateTimeUtil.time
+        )
       ).toDF()
     /**
       * In localhost, following code does not running on localhost.
-      * So, it should be running on the [[test//com.hhi.sap.table.THD_ZPSCT600_RTest]].
+      * So, it should be running on the [[factor//com.hhi.sap.table.THD_ZPSCT600_RTest]].
       * */
 //      .withColumn(TERM_MASTER.ZPSCT600_R.SERNO, row_number().over(Window.partitionBy(TERM_MASTER.ZPSCT600_R.PSPID).orderBy(TERM_MASTER.ZPSCT600_R.PSPID_A)))
 //      .withColumn(TERM_MASTER.ZPSCT600_R.RANKING, rank().over(Window.partitionBy(TERM_MASTER.ZPSCT600_R.PSPID).orderBy(TERM_MASTER.ZPSCT600_R.RANK_RATE)))

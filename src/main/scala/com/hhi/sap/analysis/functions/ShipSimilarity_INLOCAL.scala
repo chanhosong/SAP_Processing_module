@@ -1,6 +1,5 @@
 package com.hhi.sap.analysis.functions
 
-import com.hhi.sap.table.factor.FactorMasterTableFromLocal
 import com.hhi.sap.table.term.TERM_MASTER
 import org.apache.spark.sql.Row
 import org.slf4j.LoggerFactory
@@ -14,7 +13,7 @@ object ShipSimilarity_INLOCAL{
   private val MATCH_FAIL_RATE = "match_fail_rate".toUpperCase
   private val SPECIAL_SHIP = "cn".toUpperCase
 
-  def getSimilarityFromFile(ds1: Row, ds2: Row): Double = FactorMasterTableFromLocal.getTable.collect().map(e=>compareCases(e, ds1, ds2)).sum
+  def getSimilarityFromFile(factorMaster: Array[Row], ds1: Row, ds2: Row): Double = factorMaster.map(e=>compareCases(e, ds1, ds2)).sum
 
   private def compareCases(factor: Row, ds1: Row, ds2: Row): Double = {
     factor.getAs(TERM_MASTER.FACTOR.FACTOR_SEQ.toUpperCase).toString.trim match {
