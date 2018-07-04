@@ -68,6 +68,6 @@ class ANL_THD_MRPL_WEEK(sql: SQLContext) {
         DateTimeUtil.time
       )
     }).toDF()
-      .withColumn(TERM_MASTER.MRPL_WEEK.SERNO, row_number().over(Window.partitionBy(TERM_MASTER.ZPDCT6023.PSPID).orderBy(TERM_MASTER.ZPDCT6023.PSPID)))
+      .withColumn(TERM_MASTER.MRPL_WEEK.SERNO, row_number().over(Window.partitionBy(TERM_MASTER.MRPL_WEEK.PSPID).orderBy(TERM_MASTER.MRPL_WEEK.PSPID)))
   }
 }
