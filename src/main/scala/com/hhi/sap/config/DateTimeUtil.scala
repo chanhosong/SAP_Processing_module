@@ -12,7 +12,7 @@ object DateTimeUtil {
   val date = dateSDF.format(Calendar.getInstance().getTime)
   val time = timeSDF.format(Calendar.getInstance().getTime)
 
-  def getWeekDifference(zexdate: String, wc: String): Int = weekNumber(dateSDF.parse(zexdate)) -  weekNumber(dateSDF.parse(wc))
+  def getWeekDifference(zexdate: String, wc: String): Int = weekNumber(dateSDF.parse(zexdate)) - weekNumber(dateSDF.parse(wc))
   def getMonthDifference(zexdate: String, wc: String): Int = monthNumber(dateSDF.parse(zexdate)) -  monthNumber(dateSDF.parse(wc))
 
   private def weekNumber(yyyyMMdd: Date) = {
