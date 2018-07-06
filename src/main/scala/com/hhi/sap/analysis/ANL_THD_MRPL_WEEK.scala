@@ -1,6 +1,5 @@
 package com.hhi.sap.analysis
 
-import com.hhi.sap.table.bean.test
 import com.hhi.sap.table.term.TERM_MASTER
 import org.apache.spark.sql.{DataFrame, SQLContext}
 import org.slf4j.LoggerFactory
@@ -11,7 +10,6 @@ class ANL_THD_MRPL_WEEK(sql: SQLContext) {
   def run(zpdct6023: DataFrame): DataFrame = genTable(zpdct6023)
 
   private def genTable(zpdct6023: DataFrame): DataFrame = {
-    import sql.sparkSession.implicits._
 
     var PGMID = "Spark2.3.0.cloudera2"
     var CNAM = "A504863"
@@ -22,17 +20,19 @@ class ANL_THD_MRPL_WEEK(sql: SQLContext) {
     }
 
     zpdct6023.rdd
-      .map(e=>Tuple4(
-        e.getAs(TERM_MASTER.ZPDCT6023.COMPANYID).toString,
+      .map(e=>Tuple6(e.getAs(TERM_MASTER.ZPDCT6023.COMPANYID).toString,
         e.getAs(TERM_MASTER.ZPDCT6023.SAUPBU).toString,
         e.getAs(TERM_MASTER.ZPDCT6023.PSPID).toString,
-        e.getAs(TERM_MASTER.ZPDCT6023.WEEK).toString))
-      .map{ case (companyid, saupbu,  pspid, week) => ((companyid, saupbu, pspid, week), 1)}
+        e.getAs(TERM_MASTER.ZPDCT6023.STG_GUBUN).toString,
+        e.getAs(TERM_MASTER.ZPDCT6023.MAT_GUBUN).toString,
+        e.getAs(TERM_MASTER.ZPDCT6023.WEEK).toString.toInt))
+      .map{ case (companyid, saupbu,  pspid, stg_gubun, mat_gubun, week) => ((companyid, saupbu, pspid, stg_gubun, mat_gubun, week), 1)}
       .reduceByKey(_+_)
-      .map(e=> test(e._1._1, e._1._2, e._1._3, e._1._4, e._2))
-      .toDF()
-//      .groupByKey(x => x).keys.foreach(e => println(e))
-//      .reduceByKey{ case ((x1, y1), (x2, y2)) => (x1 + x2, y1 + y2)}
+      .foreach(println)
+//      .groupBy(-5 until 25 contains _._1._6)
+    null
+//      .map(e=> test(e._1._1, e._1._2, e._1._3, e._1._4, e._2))
+//      .toDF()
 //      .map(e=>{
 //      BEAN_THD_MRPL_WEEK(
 //        e.getAs(TERM_MASTER.MRPL_WEEK.COMPANYID),

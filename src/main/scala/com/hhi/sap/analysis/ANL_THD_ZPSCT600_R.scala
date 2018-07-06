@@ -53,7 +53,7 @@ class ANL_THD_ZPSCT600_R(sql: SQLContext) {
           e._2.getAs(TERM_MASTER.ZPSCT600.WEIGT_LD),
           e._2.getAs(TERM_MASTER.ZPSCT600.WC),
           e._2.getAs(TERM_MASTER.ZPSCT600.PSPID),
-          ShipSimilarity.getSimilarity(factorMaster, e._1,e._2).toString,
+          ShipSimilarity.getSimilarity(factorMaster, e._1, e._2).toString,
           PGMID,
           CNAM,
           DateTimeUtil.date,
