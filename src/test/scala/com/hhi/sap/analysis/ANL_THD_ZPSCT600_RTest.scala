@@ -13,7 +13,6 @@ class ANL_THD_ZPSCT600_RTest extends FlatSpec with SparkSessionTestWrapper{
 
   private val OUTPUTPATH = "src/test/resources/output/"
   private val TABLE1 = "table1"
-  private val TABLE2 = "table2"
   private val FILENAME = "/ZPDCV6021/20180619070731_ZPDCV6021.csv"
 
   "ZPDCV6021" should "be counted." in new SparkFileReader {
@@ -21,34 +20,18 @@ class ANL_THD_ZPSCT600_RTest extends FlatSpec with SparkSessionTestWrapper{
   }
 
   "Similarity method" should "make dataframe." in new SparkFileReader {
-    new ANL_THD_ZPSCT600_R_INLOCAL(ss.sqlContext).runFromFile(getFile(FILENAME))
-      .limit(2000).coalesce(1).write.option("header", "true").csv(OUTPUTPATH+TABLE1)
-  }
-
-  "Similarity csv file" should "be added column." in new SparkFileReader {
-    ss.read.option("header", "true").csv(OUTPUTPATH+TABLE1)
-      .withColumn(TERM_MASTER.ZPSCT600_R.SERNO, row_number().over(Window.partitionBy(TERM_MASTER.ZPSCT600_R.PSPID).orderBy(TERM_MASTER.ZPSCT600_R.PSPID_A)))
-      .withColumn(TERM_MASTER.ZPSCT600_R.RANKING, rank().over(Window.partitionBy(TERM_MASTER.ZPSCT600_R.PSPID).orderBy(TERM_MASTER.ZPSCT600_R.RANK_RATE)))
-      .show()
-  }
-
-  "Similarity csv file" should "be correctly matched the SERNO and RANKING." in new SparkFileReader {
-    ss.read.option("header", "true").csv(OUTPUTPATH+TABLE1)
-      .withColumn(TERM_MASTER.ZPSCT600_R.SERNO, row_number().over(Window.partitionBy(TERM_MASTER.ZPSCT600_R.PSPID).orderBy(TERM_MASTER.ZPSCT600_R.PSPID_A)))
-      .withColumn(TERM_MASTER.ZPSCT600_R.RANKING, rank().over(Window.partitionBy(TERM_MASTER.ZPSCT600_R.PSPID).orderBy(TERM_MASTER.ZPSCT600_R.RANK_RATE)))
-      .coalesce(1)
-      .write.option("header", "true").csv(OUTPUTPATH+TABLE2)
+    val df = new ANL_THD_ZPSCT600_R_INLOCAL(ss.sqlContext).runFromFile(getFile(FILENAME))
+    df.coalesce(1).write.option("header", "true").csv(OUTPUTPATH+TABLE1)
+    df.show()
   }
 
   "SERNO" should "be sequential." in new SparkFileReader {
-    val df = ss.read.option("header", "true").csv(OUTPUTPATH+TABLE2).where("serno == 1 OR serno == 2")
+    val df = ss.read.option("header", "true").csv(OUTPUTPATH+TABLE1).where(s"${TERM_MASTER.ZPSCT600_R.SERNO} == 1 OR ${TERM_MASTER.ZPSCT600_R.SERNO} == 2")
     df.show()
-    assert(df.count == 4)
   }
 
   "RANKING" should "be ranked." in new SparkFileReader {
-    val df = ss.read.option("header", "true").csv(OUTPUTPATH+TABLE2).where("ranking == 1").select("PSPID","ranking").distinct()
+    val df = ss.read.option("header", "true").csv(OUTPUTPATH+TABLE1).where(s"${TERM_MASTER.ZPSCT600_R.RANKING} == 1").select(TERM_MASTER.ZPSCT600_R.PSPID, TERM_MASTER.ZPSCT600_R.RANKING).distinct()
     df.show()
-    assert(df.count == 2)
   }
 }

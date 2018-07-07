@@ -48,7 +48,6 @@ object Main extends App with SparkSessionWrapper{
   val tb_MAKT = ss.read.option("header", "true").csv(HDFS_PATH+MAKT_PATH)
   val tb_QBEW = ss.read.option("header", "true").csv(HDFS_PATH+QBEW_PATH)
   val tb_MBEW = ss.read.option("header", "true").csv(HDFS_PATH+MBEW_PATH)
-  val tb_MRPL_WEEK = ss.read.option("header", "true").csv(HDFS_PATH+MBEW_PATH)
 
   /*Analysis the table and generate it.*/
   //1,2: Daily
@@ -66,7 +65,7 @@ object Main extends App with SparkSessionWrapper{
   val df_MBEW = new GEN_MBEW(ss.sqlContext).run(tb_MBEW)
 
   //10,11,12: Weekly
-  val df_MRPL_WEEK = new ANL_THD_MRPL_WEEK(ss.sqlContext).run(tb_MRPL_WEEK)
+  val df_MRPL_WEEK = new ANL_THD_MRPL_WEEK(ss.sqlContext).run(tb_ZPDCT6023.select(TERM_MASTER.ZPDCT6023.COMPANYID, TERM_MASTER.ZPDCT6023.SAUPBU, TERM_MASTER.ZPDCT6023.ZTRKNO, TERM_MASTER.ZPDCT6023.ZREVNO, TERM_MASTER.ZPDCT6023.PSPID, TERM_MASTER.ZPDCT6023.STG_GUBUN, TERM_MASTER.ZPDCT6023.MAT_GUBUN, TERM_MASTER.ZPDCT6023.WEEK))
 
 
   /*End Application*/

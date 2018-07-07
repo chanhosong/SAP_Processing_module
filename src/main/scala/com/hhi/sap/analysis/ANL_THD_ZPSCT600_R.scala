@@ -26,9 +26,6 @@ class ANL_THD_ZPSCT600_R(sql: SQLContext) {
       CNAM = "[DEBUGMODE]A504863"
     }
 
-    val date = DateTimeUtil.date
-    val time = DateTimeUtil.time
-
     val progressShip = tb_ZPDCT_600.where(SQL_MASTER.ZPSCT_600.SQL_COSTAT_N)
     val completeShip = tb_ZPDCT_600.where(SQL_MASTER.ZPSCT_600.SQL_COSTAT_Y)
 
@@ -56,14 +53,14 @@ class ANL_THD_ZPSCT600_R(sql: SQLContext) {
           e._2.getAs(TERM_MASTER.ZPSCT600.WEIGT_LD),
           e._2.getAs(TERM_MASTER.ZPSCT600.WC),
           e._2.getAs(TERM_MASTER.ZPSCT600.PSPID),
-          ShipSimilarity.getSimilarity(factorMaster, e._1,e._2).toString,
+          ShipSimilarity.getSimilarity(factorMaster, e._1, e._2).toString,
           PGMID,
           CNAM,
           DateTimeUtil.date,
           DateTimeUtil.time
         )
       ).toDF()
-      .withColumn(TERM_MASTER.ZPSCT600_R.SERNO, row_number().over(Window.partitionBy(TERM_MASTER.ZPSCT600_R.PSPID).orderBy(TERM_MASTER.ZPSCT600_R.PSPID_A)))
+      .withColumn(TERM_MASTER.ZPSCT600_R.SERNO, row_number().over(Window.partitionBy(TERM_MASTER.ZPSCT600_R.PSPID).orderBy(TERM_MASTER.ZPSCT600_R.PSPID)))
       .withColumn(TERM_MASTER.ZPSCT600_R.RANKING, rank().over(Window.partitionBy(TERM_MASTER.ZPSCT600_R.PSPID).orderBy(TERM_MASTER.ZPSCT600_R.RANK_RATE)))
   }
 }

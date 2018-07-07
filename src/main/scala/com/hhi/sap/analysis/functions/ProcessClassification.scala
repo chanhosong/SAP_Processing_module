@@ -16,11 +16,11 @@ object ProcessClassification {
       case "P" => "후행의장"
       case "R" => "시운전"
       case x =>
-        if (Option(x).isEmpty) null
-        else if (Option(zhdrmatnr).isEmpty) null
+        if (Option(x).isEmpty) "NULL"
+        else if (Option(zhdrmatnr).isEmpty) "NULL"
         else zhdrmatnr match {
         case x:String =>
-          if(Option(x).isEmpty) null
+          if(Option(x).isEmpty) "NULL"
           else if (x.matches(matchShipID)) "UNIT"
           else "기타"
       }
@@ -35,12 +35,12 @@ object ProcessClassification {
       case "PP" => "PIPE_PS'S"
       case _ => lgort match {
         case "PC50" =>
-          if (Option(paintgbn).isEmpty) null
+          if (Option(paintgbn).isEmpty) "NULL"
           else if (paintgbn.matches(REGEX_PAINT)) "냉천도장"
           else if (paintgbn.matches(REGEX_PAINT_NOT)) "야드직투입"
           else null
         case x:String =>
-          if (Option(x).isEmpty) null
+          if (Option(x).isEmpty) "NULL"
           else zzmgroup match {
             case "JY" => "기장"
             case "JN" => "선실"
@@ -59,7 +59,7 @@ object ProcessClassification {
             case "CP" => "STEEL_PIPE"
             case "CQ" => "비철_PIPE"
             case x:String =>
-              if (Option(x).isEmpty) null
+              if (Option(x).isEmpty) "NULL"
               else if (x.startsWith("J")) "기타"
               else MATCH_FAIL
         }
