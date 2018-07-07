@@ -35,7 +35,6 @@ class ANL_THD_MRPL_WEEKTest extends FlatSpec with SparkSessionTestWrapper{
       .reduceByKey((x, y) => (x._1 + y._1, math.min(x._2, y._2), math.max(x._3, y._3), x._4 + y._4))
       .collect.foreach(println)
 
-
     ss.sparkContext.parallelize(List(
 //      ("West",  "Apple1",  -9.0, 10),
       ("West",  "Apple1",  -4.0, 10),
@@ -47,7 +46,7 @@ class ANL_THD_MRPL_WEEKTest extends FlatSpec with SparkSessionTestWrapper{
       ("South", "Orange", 6.0, 18),
       ("East",  "Milk",   5.0, 5)))
       .map{ case (store, prod, amt, units) => ((store, prod), (amt, amt, amt, units)) }
-      .reduceByKey((x, y) => (if(x._1 < -5  ) x._1 + y._1 else 0, math.min(x._2, y._2), math.max(x._3, y._3), x._4 + y._4))
+      .reduceByKey((x, y) => ( if(x._1 < -5) x._1 + y._1 else 0, math.min(x._2, y._2), math.max(x._3, y._3), x._4 + y._4))
       .collect.foreach(println)
   }
 
