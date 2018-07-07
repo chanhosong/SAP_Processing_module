@@ -1,8 +1,9 @@
 package com.hhi.sap.analysis
 
-import com.hhi.sap.table.bean.{BEAN_THD_MRPL_WEEK, BEAN_THD_MRPL_WEEK_TEMP}
+import com.hhi.sap.table.bean.BEAN_THD_MRPL_WEEK_TEMP
 import com.hhi.sap.table.term.TERM_MASTER
 import org.apache.spark.sql.{DataFrame, SQLContext}
+import org.apache.spark.sql.functions._
 import org.slf4j.LoggerFactory
 
 class ANL_THD_MRPL_WEEK(sql: SQLContext) {
@@ -30,7 +31,10 @@ class ANL_THD_MRPL_WEEK(sql: SQLContext) {
         e.getAs(TERM_MASTER.ZPDCT6023.WEEK).toString.toInt))
       .map{ case (companyid, saupbu,  pspid, stg_gubun, mat_gubun, week) => ((companyid, saupbu, pspid, stg_gubun, mat_gubun, week), 1)}
       .reduceByKey(_+_).map(e=> BEAN_THD_MRPL_WEEK_TEMP(e._1._1, e._1._2, e._1._3, e._1._4, e._1._5, e._1._6, e._2))
-      .toDF().show()
+      .toDF()
+      .where("week < -5")
+      .select(sum("count"))
+      .show()
 
 //    test.filter(_._1._6 < -5).foreach(println)
 //    test.filter(-5 until 20 contains _._1._6).foreach(println)
