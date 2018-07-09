@@ -1,10 +1,14 @@
 package com.hhi.sap.analysis
 
-import com.hhi.sap.table.bean.BEAN_THD_MRPL_WEEK_TEMP
+import com.hhi.sap.table.bean.{BEAN_THD_MRPL_WEEK, BEAN_THD_MRPL_WEEK_COUNT}
 import com.hhi.sap.table.term.TERM_MASTER
+import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.expressions.Window
 import org.apache.spark.sql.{DataFrame, SQLContext}
 import org.apache.spark.sql.functions._
 import org.slf4j.LoggerFactory
+
+import scala.util.{Failure, Success, Try}
 
 class ANL_THD_MRPL_WEEK(sql: SQLContext) {
   private val logger = LoggerFactory.getLogger(this.getClass)
@@ -22,7 +26,7 @@ class ANL_THD_MRPL_WEEK(sql: SQLContext) {
       CNAM = "[DEBUGMODE]A504863"
     }
 
-    val test = zpdct6023.rdd
+    val intermediateRDD = zpdct6023.rdd
       .map(e=>Tuple6(e.getAs(TERM_MASTER.ZPDCT6023.COMPANYID).toString,
         e.getAs(TERM_MASTER.ZPDCT6023.SAUPBU).toString,
         e.getAs(TERM_MASTER.ZPDCT6023.PSPID).toString,
@@ -30,64 +34,59 @@ class ANL_THD_MRPL_WEEK(sql: SQLContext) {
         e.getAs(TERM_MASTER.ZPDCT6023.MAT_GUBUN).toString,
         e.getAs(TERM_MASTER.ZPDCT6023.WEEK).toString.toInt))
       .map{ case (companyid, saupbu,  pspid, stg_gubun, mat_gubun, week) => ((companyid, saupbu, pspid, stg_gubun, mat_gubun, week), 1)}
-      .reduceByKey(_+_).map(e=> BEAN_THD_MRPL_WEEK_TEMP(e._1._1, e._1._2, e._1._3, e._1._4, e._1._5, e._1._6, e._2))
-      .toDF()
-      .where("week < -5")
-      .select(sum("count"))
-      .show()
+      .reduceByKey(_+_)
+      .map(e=> BEAN_THD_MRPL_WEEK_COUNT(e._1._1, e._1._2, e._1._3, e._1._4, e._1._5, e._1._6, e._2))
 
-//    test.filter(_._1._6 < -5).foreach(println)
-//    test.filter(-5 until 20 contains _._1._6).foreach(println)
-//    test.filter(_._1._6 > 20).foreach(println)
+    val underRDD = week(intermediateRDD.filter(_.week <= -5), -5)
+    val upperRDD = week(intermediateRDD.filter(_.week >= 20), 20)
 
-//      .groupBy(-5 until 25 contains _._1._6)
-    null
-//      .map(e=> test(e._1._1, e._1._2, e._1._3, e._1._4, e._2))
-//      .toDF()
-//      .map(e=>{
-//      BEAN_THD_MRPL_WEEK(
-//        e.getAs(TERM_MASTER.MRPL_WEEK.COMPANYID),
-//        e.getAs(TERM_MASTER.MRPL_WEEK.SAUPBU),
-//        e.getAs(TERM_MASTER.MRPL_WEEK.PSPID),
-//        e.getAs(TERM_MASTER.MRPL_WEEK.STG_GUBUN),
-//        e.getAs(TERM_MASTER.MRPL_WEEK.MAT_GUBUN),
-//        e.getAs(TERM_MASTER.MRPL_WEEK.WCM5),//
-//        e.getAs(TERM_MASTER.MRPL_WEEK.WCM4),//
-//        e.getAs(TERM_MASTER.MRPL_WEEK.WCM3),//
-//        e.getAs(TERM_MASTER.MRPL_WEEK.WCM2),//
-//        e.getAs(TERM_MASTER.MRPL_WEEK.WCM1),//
-//        e.getAs(TERM_MASTER.MRPL_WEEK.WC),//
-//        e.getAs(TERM_MASTER.MRPL_WEEK.WCP1),//
-//        e.getAs(TERM_MASTER.MRPL_WEEK.WCP2),//
-//        e.getAs(TERM_MASTER.MRPL_WEEK.WCP3),//
-//        e.getAs(TERM_MASTER.MRPL_WEEK.WCP4),//
-//        e.getAs(TERM_MASTER.MRPL_WEEK.WCP5),//
-//        e.getAs(TERM_MASTER.MRPL_WEEK.WCP6),//
-//        e.getAs(TERM_MASTER.MRPL_WEEK.WCP7),
-//        e.getAs(TERM_MASTER.MRPL_WEEK.WCP8),
-//        e.getAs(TERM_MASTER.MRPL_WEEK.WCP9),
-//        e.getAs(TERM_MASTER.MRPL_WEEK.WCP10),
-//        e.getAs(TERM_MASTER.MRPL_WEEK.WCP11),
-//        e.getAs(TERM_MASTER.MRPL_WEEK.WCP12),
-//        e.getAs(TERM_MASTER.MRPL_WEEK.WCP13),
-//        e.getAs(TERM_MASTER.MRPL_WEEK.WCP14),
-//        e.getAs(TERM_MASTER.MRPL_WEEK.WCP15),
-//        e.getAs(TERM_MASTER.MRPL_WEEK.WCP16),
-//        e.getAs(TERM_MASTER.MRPL_WEEK.WCP17),
-//        e.getAs(TERM_MASTER.MRPL_WEEK.WCP18),
-//        e.getAs(TERM_MASTER.MRPL_WEEK.WCP19),
-//        e.getAs(TERM_MASTER.MRPL_WEEK.WCP20),
-//        e.getAs(TERM_MASTER.MRPL_WEEK.WCP21),
-//        e.getAs(TERM_MASTER.MRPL_WEEK.WCP22),
-//        e.getAs(TERM_MASTER.MRPL_WEEK.WCP23),
-//        e.getAs(TERM_MASTER.MRPL_WEEK.WCP24),
-//        e.getAs(TERM_MASTER.MRPL_WEEK.WCP25),
-//        PGMID,
-//        CNAM,
-//        DateTimeUtil.date,
-//        DateTimeUtil.time
-//      )
-//    }).toDF()
-//      .withColumn(TERM_MASTER.MRPL_WEEK.SERNO, row_number().over(Window.partitionBy(TERM_MASTER.MRPL_WEEK.PSPID).orderBy(TERM_MASTER.MRPL_WEEK.PSPID)))
+    intermediateRDD.filter(-4 until 19 contains _.week).toDF().union(underRDD).union(upperRDD)
+      .withColumn(TERM_MASTER.MRPL_WEEK.SERNO, row_number().over(Window.partitionBy(TERM_MASTER.MRPL_WEEK.COMPANYID).partitionBy(TERM_MASTER.MRPL_WEEK.SAUPBU).partitionBy(TERM_MASTER.MRPL_WEEK.PSPID).orderBy(TERM_MASTER.MRPL_WEEK.PSPID)))
+      .groupBy("companyid","saupbu", "pspid", "stg_gubun", "mat_gubun", "serno").pivot("week").sum("count").na.fill(0)
+      .map(e=>{
+      BEAN_THD_MRPL_WEEK(
+        e.getAs(TERM_MASTER.MRPL_WEEK.COMPANYID),
+        e.getAs(TERM_MASTER.MRPL_WEEK.SAUPBU),
+        e.getAs(TERM_MASTER.MRPL_WEEK.PSPID),
+        e.getAs(TERM_MASTER.MRPL_WEEK.SERNO).toString,
+        e.getAs(TERM_MASTER.MRPL_WEEK.STG_GUBUN),
+        e.getAs(TERM_MASTER.MRPL_WEEK.MAT_GUBUN),
+        Try(e.getAs("-5").toString) match {case Success(s) => s case Failure(s) => "0"},
+        Try(e.getAs("-4").toString) match {case Success(s) => s case Failure(s) => "0"},
+        Try(e.getAs("-3").toString) match {case Success(s) => s case Failure(s) => "0"},
+        Try(e.getAs("-2").toString) match {case Success(s) => s case Failure(s) => "0"},
+        Try(e.getAs("-1").toString) match {case Success(s) => s case Failure(s) => "0"},
+        Try(e.getAs("0" ).toString) match {case Success(s) => s case Failure(s) => "0"},
+        Try(e.getAs("1" ).toString) match {case Success(s) => s case Failure(s) => "0"},
+        Try(e.getAs("2" ).toString) match {case Success(s) => s case Failure(s) => "0"},
+        Try(e.getAs("3" ).toString) match {case Success(s) => s case Failure(s) => "0"},
+        Try(e.getAs("4" ).toString) match {case Success(s) => s case Failure(s) => "0"},
+        Try(e.getAs("5" ).toString) match {case Success(s) => s case Failure(s) => "0"},
+        Try(e.getAs("6" ).toString) match {case Success(s) => s case Failure(s) => "0"},
+        Try(e.getAs("7" ).toString) match {case Success(s) => s case Failure(s) => "0"},
+        Try(e.getAs("8" ).toString) match {case Success(s) => s case Failure(s) => "0"},
+        Try(e.getAs("9" ).toString) match {case Success(s) => s case Failure(s) => "0"},
+        Try(e.getAs("10").toString) match {case Success(s) => s case Failure(s) => "0"},
+        Try(e.getAs("11").toString) match {case Success(s) => s case Failure(s) => "0"},
+        Try(e.getAs("12").toString) match {case Success(s) => s case Failure(s) => "0"},
+        Try(e.getAs("13").toString) match {case Success(s) => s case Failure(s) => "0"},
+        Try(e.getAs("14").toString) match {case Success(s) => s case Failure(s) => "0"},
+        Try(e.getAs("15").toString) match {case Success(s) => s case Failure(s) => "0"},
+        Try(e.getAs("16").toString) match {case Success(s) => s case Failure(s) => "0"},
+        Try(e.getAs("17").toString) match {case Success(s) => s case Failure(s) => "0"},
+        Try(e.getAs("18").toString) match {case Success(s) => s case Failure(s) => "0"},
+        Try(e.getAs("19").toString) match {case Success(s) => s case Failure(s) => "0"},
+        Try(e.getAs("20").toString) match {case Success(s) => s case Failure(s) => "0"}
+      )
+    }).toDF()
+  }
+
+  private def week(weekRDD: RDD[BEAN_THD_MRPL_WEEK_COUNT], week: Int): DataFrame = {
+    import sql.sparkSession.implicits._
+
+    weekRDD.map{ BEAN_THD_MRPL_WEEK_TEMP => ((BEAN_THD_MRPL_WEEK_TEMP.companyid, BEAN_THD_MRPL_WEEK_TEMP.saupbu, BEAN_THD_MRPL_WEEK_TEMP.pspid, BEAN_THD_MRPL_WEEK_TEMP.stg_gubun, BEAN_THD_MRPL_WEEK_TEMP.mat_gubun), BEAN_THD_MRPL_WEEK_TEMP.count)}
+      .reduceByKey(_+_)
+      .map{ case ((companyid, saupbu, pspid, stg_gubun, mat_gubun), count) => (companyid, saupbu, pspid, stg_gubun, mat_gubun, week, count)}
+      .toDF("companyid", "saupbu", "pspid", "stg_gubun", "mat_gubun", "week", "count")
   }
 }
