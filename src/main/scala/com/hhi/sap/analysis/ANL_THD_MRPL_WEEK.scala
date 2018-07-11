@@ -1,6 +1,6 @@
 package com.hhi.sap.analysis
 
-import com.hhi.sap.analysis.functions.MRPLTableGenerator
+import com.hhi.sap.analysis.functions.MRPLTableUtils
 import org.apache.spark.sql.{DataFrame, SQLContext}
 import org.slf4j.LoggerFactory
 
@@ -20,16 +20,15 @@ class ANL_THD_MRPL_WEEK(sql: SQLContext) {
       CNAM = "[DEBUGMODE]A504863"
     }
 
-    val intermediateRDD = MRPLTableGenerator.getIntermediateRDD(zpdct6023)
+    val intermediateRDD = MRPLTableUtils.getIntermediateRDD(zpdct6023)
 
-    val underRDD = MRPLTableGenerator.getWeekTable(sql, intermediateRDD.filter(_.week <= -5), -5)
-    val upperRDD = MRPLTableGenerator.getWeekTable(sql, intermediateRDD.filter(_.week >= 20), 20)
+    val underRDD = MRPLTableUtils.getWeekTable(intermediateRDD.filter(_.week <= -5), -5)
+    val upperRDD = MRPLTableUtils.getWeekTable(intermediateRDD.filter(_.week >= 20), 20)
 
-    var test = MRPLTableGenerator.getUnion(intermediateRDD.filter(-4 until 19 contains _.week).toDF(), underRDD, upperRDD)
-
-    test = MRPLTableGenerator.addSERNO(test)
-    test = MRPLTableGenerator.pivotTable(test, 0)
-
-    MRPLTableGenerator.mappingMRPLTable(sql, test)
+    MRPLTableUtils
+      .getUnion(intermediateRDD.filter(-4 until 19 contains _.week).toDF(), underRDD, upperRDD)
+      .transform(MRPLTableUtils.addSERNO)
+      .transform(MRPLTableUtils.pivotTable)
+      .transform(MRPLTableUtils.mappingMRPLTable)
   }
 }
