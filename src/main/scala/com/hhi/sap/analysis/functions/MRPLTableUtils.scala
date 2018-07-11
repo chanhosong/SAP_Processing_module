@@ -11,13 +11,13 @@ import org.apache.spark.sql.functions.row_number
 import scala.util.{Failure, Success, Try}
 
 object MRPLTableUtils extends SparkSessionWrapper{
-  private val COMPANYID = TERM_MASTER.ZPDCT6023.COMPANYID
-  private val SAUPBU = TERM_MASTER.ZPDCT6023.SAUPBU
-  private val PSPID = TERM_MASTER.ZPDCT6023.PSPID
+  private val COMPANYID = TERM_MASTER.ZPDCT6123.COMPANYID
+  private val SAUPBU = TERM_MASTER.ZPDCT6123.SAUPBU
+  private val PSPID = TERM_MASTER.ZPDCT6123.PSPID
   private val SERNO = "serno".toUpperCase()
-  private val STG_GUBUN = TERM_MASTER.ZPDCT6023.STG_GUBUN
-  private val MAT_GUBUN = TERM_MASTER.ZPDCT6023.MAT_GUBUN
-  private val WEEK = TERM_MASTER.ZPDCT6023.WEEK
+  private val STG_GUBUN = TERM_MASTER.ZPDCT6123.STG_GUBUN
+  private val MAT_GUBUN = TERM_MASTER.ZPDCT6123.MAT_GUBUN
+  private val WEEK = TERM_MASTER.ZPDCT6123.WEEK
   private val COUNT = "count".toUpperCase()
 
   def getMRPLRDD(df: DataFrame): RDD[BEAN_THD_MRPL_WEEK_COUNT] = {
@@ -41,7 +41,7 @@ object MRPLTableUtils extends SparkSessionWrapper{
       .toDF(COMPANYID, SAUPBU, PSPID, STG_GUBUN, MAT_GUBUN, WEEK, COUNT)
   }
 
-  def getUnion(df: DataFrame, underRDD: DataFrame, upperRDD: DataFrame): DataFrame = df.union(underRDD).union(upperRDD)
+  def makeUnion(df: DataFrame, underRDD: DataFrame, upperRDD: DataFrame): DataFrame = df.union(underRDD).union(upperRDD)
 
   def addSERNO(df: DataFrame): DataFrame = df.withColumn(TERM_MASTER.MRPL_WEEK.SERNO, row_number().over(Window.partitionBy(TERM_MASTER.MRPL_WEEK.COMPANYID).partitionBy(TERM_MASTER.MRPL_WEEK.SAUPBU).partitionBy(TERM_MASTER.MRPL_WEEK.PSPID).orderBy(TERM_MASTER.MRPL_WEEK.PSPID)))
 
