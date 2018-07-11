@@ -20,13 +20,12 @@ class ANL_THD_MRPL_WEEK(sql: SQLContext) {
       CNAM = "[DEBUGMODE]A504863"
     }
 
-    val intermediateRDD = MRPLTableUtils.getIntermediateRDD(zpdct6023)
-
-    val underRDD = MRPLTableUtils.getWeekTable(intermediateRDD.filter(_.week <= -5), -5)
-    val upperRDD = MRPLTableUtils.getWeekTable(intermediateRDD.filter(_.week >= 20), 20)
+    val mrplRDD = MRPLTableUtils.getMRPLRDD(zpdct6023)
+    val underRDD = MRPLTableUtils.getWeekTable(mrplRDD.filter(_.week <= -5), -5)
+    val upperRDD = MRPLTableUtils.getWeekTable(mrplRDD.filter(_.week >= 20), 20)
 
     MRPLTableUtils
-      .getUnion(intermediateRDD.filter(-4 until 19 contains _.week).toDF(), underRDD, upperRDD)
+      .getUnion(mrplRDD.filter(-4 until 19 contains _.week).toDF(), underRDD, upperRDD)
       .transform(MRPLTableUtils.addSERNO)
       .transform(MRPLTableUtils.pivotTable)
       .transform(MRPLTableUtils.mappingMRPLTable)

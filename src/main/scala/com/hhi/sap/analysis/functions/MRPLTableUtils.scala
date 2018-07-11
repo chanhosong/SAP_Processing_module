@@ -20,7 +20,7 @@ object MRPLTableUtils extends SparkSessionWrapper{
   private val WEEK = TERM_MASTER.ZPDCT6023.WEEK
   private val COUNT = "count".toUpperCase()
 
-  def getIntermediateRDD(df: DataFrame): RDD[BEAN_THD_MRPL_WEEK_COUNT] = {
+  def getMRPLRDD(df: DataFrame): RDD[BEAN_THD_MRPL_WEEK_COUNT] = {
     df.rdd.map(e => Tuple6(e.getAs(COMPANYID).toString,
       e.getAs(SAUPBU).toString,
       e.getAs(PSPID).toString,
