@@ -4,7 +4,7 @@ import com.hhi.sap.analysis.functions.MRPLTableUtils
 import org.apache.spark.sql.{DataFrame, SQLContext}
 import org.slf4j.LoggerFactory
 
-class ANL_THD_MRPL_WEEK(sql: SQLContext) {
+class ANL_THD_WEIGHT_WEEKLY(sql: SQLContext) {
   private val logger = LoggerFactory.getLogger(this.getClass)
 
   def run(zpdct6023: DataFrame): DataFrame = genTable(zpdct6023)
