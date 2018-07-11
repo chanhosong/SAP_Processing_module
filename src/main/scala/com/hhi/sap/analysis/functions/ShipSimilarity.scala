@@ -13,10 +13,10 @@ object ShipSimilarity{
   private val MATCH_FAIL_RATE = "match_fail_rate"
   private val SPECIAL_SHIP = "cn"
 
-  def getSimilarity(factorMaster: Seq[Row], ds1: Row, ds2: Row): Double = factorMaster.map(e=>compareCases(e,ds1,ds2)).sum
+  def getSimilarity(factorMaster: Seq[Row], ds1: Row, ds2: Row): Double = factorMaster.map(compareCases(_,ds1,ds2)).sum
 
   private def compareCases(factor: Row, ds1: Row, ds2: Row): Double = {
-    factor.getAs(TERM_MASTER.FACTOR.FACTOR_SEQ).toString.trim match {
+    factor.getAs[String](TERM_MASTER.FACTOR.FACTOR_SEQ).trim match {
       case "01" => compareEqualsShip(TERM_MASTER.ZPSCT600.SHIP_KIND, ds1, ds2, factor)
       case "02" => compareEqualsShip(TERM_MASTER.ZPSCT600.SHIP_TYPE_1, ds1, ds2, factor)
       case "03" => compareEqualsShip(TERM_MASTER.ZPSCT600.DOCK, ds1, ds2, factor)
@@ -34,7 +34,7 @@ object ShipSimilarity{
   }
 
   private def compareEqualsShip(cps: String, c1: Row, c2: Row, factor: Row): Double = {
-    if (c1.getAs(cps).toString == c2.getAs(cps).toString){
+    if (c1.getAs[String](cps) == c2.getAs[String](cps)){
       Integer.parseInt(factor.getAs(FACTOR_RATE))
     } else {
       getFactor(factor.getAs(FACTOR_RATE), factor.getAs(MATCH_FAIL_RATE) , PT)
@@ -42,9 +42,9 @@ object ShipSimilarity{
   }
 
   private def compareEqualsShipSpec(cps: String, r1: Row, r2: Row, factor: Row): Double = {
-    val shipKind = r1.getAs(cps).toString
+    val shipKind = r1.getAs[String](cps)
 
-    if (shipKind == r2.getAs(cps)){
+    if (shipKind == r2.getAs[String](cps)){
       shipKind.toString match {
         case SPECIAL_SHIP => compareVolume(TERM_MASTER.ZPSCT600.CNTR , r1, r2, factor)
         case _ => compareVolume(TERM_MASTER.ZPSCT600.DWT_SC, r1, r2, factor)
@@ -55,7 +55,7 @@ object ShipSimilarity{
   }
 
   private def compareDuration(cps: String, r1: Row, r2: Row, factor: Row): Double = {
-    ((r1.getAs(cps): String).trim.toInt - (r2.getAs(cps): String).trim.toInt).abs match {
+    (r1.getAs[String](cps).trim.toInt - r2.getAs[String](cps).trim.toInt).abs match {
       case x if 0 until 10 contains x => getFactor(factor.getAs(FACTOR_RATE), factor.getAs(TERM_MASTER.FACTOR.MATCH01), PT)
       case x if 11 until 30 contains x => getFactor(factor.getAs(FACTOR_RATE), factor.getAs(TERM_MASTER.FACTOR.MATCH02), PT)
       case x if 31 until 50 contains x => getFactor(factor.getAs(FACTOR_RATE), factor.getAs(TERM_MASTER.FACTOR.MATCH03), PT)
@@ -64,7 +64,7 @@ object ShipSimilarity{
   }
 
   private def compareWeight(cps: String, r1: Row, r2: Row, factor: Row): Double = {
-    (r1.getAs(cps).toString.toDouble - r2.getAs(cps).toString.toDouble).abs match {
+    (r1.getAs[String](cps).toDouble - r2.getAs[String](cps).toDouble).abs match {
       case x if 0 until 1000 contains x => getFactor(factor.getAs(FACTOR_RATE), factor.getAs(TERM_MASTER.FACTOR.MATCH01), PT)
       case x if 1001 until 3000 contains x => getFactor(factor.getAs(FACTOR_RATE), factor.getAs(TERM_MASTER.FACTOR.MATCH02), PT)
       case x if 3001 until 5000 contains x => getFactor(factor.getAs(FACTOR_RATE), factor.getAs(TERM_MASTER.FACTOR.MATCH03), PT)
@@ -73,7 +73,7 @@ object ShipSimilarity{
   }
 
   private def compareVolume(cps: String, r1: Row, r2: Row, factor: Row): Double = {
-    (r1.getAs(cps).toString.toDouble - r2.getAs(cps).toString.toDouble).abs match {
+    (r1.getAs[String](cps).toDouble - r2.getAs[String](cps).toDouble).abs match {
       case x if 0 until 500 contains x => getFactor(factor.getAs(FACTOR_RATE), factor.getAs(TERM_MASTER.FACTOR.MATCH01), PT)
       case x if 501 until 1000 contains x => getFactor(factor.getAs(FACTOR_RATE), factor.getAs(TERM_MASTER.FACTOR.MATCH02), PT)
       case _ => getFactor(factor.getAs(FACTOR_RATE), factor.getAs(TERM_MASTER.FACTOR.MATCH04), PT)
