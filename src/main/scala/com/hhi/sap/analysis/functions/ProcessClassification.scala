@@ -8,21 +8,21 @@ object ProcessClassification {
     val (zzwkstg, zzwktyp) = (zmidactno.substring(11), zmidactno.substring(12, 13))
 
     zzwkstg match {
-      case "A" | "B" => "조립"
-      case "C" => if (Option(zzwktyp).isEmpty) null else if (zzwktyp.contains("21")) "INSHOP" else "조립"
-      case "F" => "선행의장"
-      case "G" | "H" | "J"  => "PE의장"
-      case "K" | "L" | "M" => "후PE의장"
-      case "P" => "후행의장"
-      case "R" => "시운전"
+      case "A" | "B" => "1"
+      case "C" => if (Option(zzwktyp).isEmpty) null else if (zzwktyp.contains("21")) "2" else "1"
+      case "F" => "3"
+      case "G" | "H" | "J"  => "5"
+      case "K" | "L" | "M" => "6"
+      case "P" => "7"
+      case "R" => "8"
       case x =>
         if (Option(x).isEmpty) "NULL"
         else if (Option(zhdrmatnr).isEmpty) "NULL"
         else zhdrmatnr match {
         case x:String =>
           if(Option(x).isEmpty) "NULL"
-          else if (x.matches(matchShipID)) "UNIT"
-          else "기타"
+          else if (x.matches(matchShipID)) "4"
+          else "9"
       }
     }
   }
@@ -32,35 +32,35 @@ object ProcessClassification {
     val REGEX_PAINT_NOT = "[^P|T|D|G|Q|R]"
 
     idnrk.substring(6,8) match {
-      case "PP" => "PIPE_PS'S"
+      case "PP" => "A"
       case _ => lgort match {
         case "PC50" =>
           if (Option(paintgbn).isEmpty) "NULL"
-          else if (paintgbn.matches(REGEX_PAINT)) "냉천도장"
-          else if (paintgbn.matches(REGEX_PAINT_NOT)) "야드직투입"
+          else if (paintgbn.matches(REGEX_PAINT)) "B"
+          else if (paintgbn.matches(REGEX_PAINT_NOT)) "C"
           else null
         case x:String =>
           if (Option(x).isEmpty) "NULL"
           else zzmgroup match {
-            case "JY" => "기장"
-            case "JN" => "선실"
-            case "JU" => "선장"
-            case "JT" => "전장"
-            case "JC" => "케이블"
-            case "JL" => "LIGHTING"
-            case "JW" => "보온재"
-            case "JD" => "PUMP"
-            case "CV" => "VALVE"
-            case "CA" => "GASKET"
-            case "CB" => "BOLT/NUT"
-            case "CF" | "CG" => "FLANGE"
-            case "CO" | "CR" => "STEEL_FITTING"
-            case "CL" | "CM" => "비철_FITTING"
-            case "CP" => "STEEL_PIPE"
-            case "CQ" => "비철_PIPE"
+            case "JY" => "D"
+            case "JN" => "E"
+            case "JU" => "F"
+            case "JT" => "G"
+            case "JC" => "H"
+            case "JL" => "I"
+            case "JW" => "J"
+            case "JD" => "K"
+            case "CV" => "M"
+            case "CA" => "N"
+            case "CB" => "O"
+            case "CF" | "CG" => "P"
+            case "CO" | "CR" => "Q"
+            case "CL" | "CM" => "R"
+            case "CP" => "S"
+            case "CQ" => "T"
             case x:String =>
               if (Option(x).isEmpty) "NULL"
-              else if (x.startsWith("J")) "기타"
+              else if (x.startsWith("J")) "L"
               else MATCH_FAIL
         }
       }
