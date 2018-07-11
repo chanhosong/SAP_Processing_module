@@ -10,7 +10,7 @@ class ANL_ZPDCT6123Test extends FlatSpec with SparkSessionTestWrapper{
   private val logger = LoggerFactory.getLogger(this.getClass)
 
   private val OUTPUTPATH = "src/test/resources"
-  private val TABLE3 = "table3"
+  private val TABLE3 = "/output/table3"
   private val FILENPATH_ZPSCT600 = "/ZPDCV6021/*"
   private val FILENPATH_ZPDCT6123 = "/ZPDCT6123/*"
   private val FILEPATH_EBAN = "/EBAN/*"
@@ -32,5 +32,17 @@ class ANL_ZPDCT6123Test extends FlatSpec with SparkSessionTestWrapper{
       , eban.select(TERM_MASTER.EBAN.COMPANYID, TERM_MASTER.EBAN.SAUPBU, TERM_MASTER.EBAN.BANFN, TERM_MASTER.EBAN.BFNPO, TERM_MASTER.EBAN.LGORT, TERM_MASTER.EBAN.PAINTGBN)
       , mara.select(TERM_MASTER.MARA.COMPANYID, TERM_MASTER.MARA.SAUPBU, TERM_MASTER.MARA.MATNR, TERM_MASTER.MARA.ZZMGROUP))
       .show(100)
+  }
+
+  "ZPDCT6123 " should "make csv." in new SparkFileReader {
+    val tb_ZPSCT600 = ss.read.option("header", "true").csv(OUTPUTPATH+FILENPATH_ZPSCT600)
+    val ZPDCT6123 = getFolder(OUTPUTPATH+FILENPATH_ZPDCT6123).withColumnRenamed("bnfpo".toUpperCase(), TERM_MASTER.ZPDCT6123.BFNPO).withColumnRenamed("zkvndcod".toUpperCase(), TERM_MASTER.ZPDCT6123.ZKGVNDCOD)
+    val eban = getFolder(OUTPUTPATH+FILEPATH_EBAN).withColumnRenamed("bnfpo".toUpperCase(), TERM_MASTER.EBAN.BFNPO)
+    val mara = getFolder(OUTPUTPATH+FILEPATH_MARA)
+
+    new ANL_ZPDCT6123(ss.sqlContext).run(ZPDCT6123, tb_ZPSCT600
+      , eban.select(TERM_MASTER.EBAN.COMPANYID, TERM_MASTER.EBAN.SAUPBU, TERM_MASTER.EBAN.BANFN, TERM_MASTER.EBAN.BFNPO, TERM_MASTER.EBAN.LGORT, TERM_MASTER.EBAN.PAINTGBN)
+      , mara.select(TERM_MASTER.MARA.COMPANYID, TERM_MASTER.MARA.SAUPBU, TERM_MASTER.MARA.MATNR, TERM_MASTER.MARA.ZZMGROUP))
+      .coalesce(1).write.option("header", "true").csv(OUTPUTPATH+TABLE3)
   }
 }

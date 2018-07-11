@@ -11,7 +11,7 @@ class ANL_THD_MRPL_WEEKTest extends FlatSpec with SparkSessionTestWrapper{
   private val logger = LoggerFactory.getLogger(this.getClass)
 
   private val INPUTPATH = "src/test/resources"
-  private val TABLE4 = "/output/table4"
+  private val TABLE3 = "/output/table3"
   private val FILENPATH_ZPSCT600 = "/ZPDCV6021/*"
   private val FILENPATH_ZPDCT6123 = "/ZPDCT6123/*"
   private val FILEPATH_EBAN = "/EBAN/*"
@@ -74,7 +74,7 @@ class ANL_THD_MRPL_WEEKTest extends FlatSpec with SparkSessionTestWrapper{
 
   "ZPDCT6123 " should "make dataframe." in new SparkFileReader {
     //"Please be generated a table ZPDCT6123 on class ANL_THD_ZPSCT600_RTest "
-    val tb_ZPDCT6123 = ss.read.option("header", "true").csv(INPUTPATH + TABLE4)
+    val tb_ZPDCT6123 = ss.read.option("header", "true").csv(INPUTPATH + TABLE3)
 
     new ANL_THD_MRPL_WEEK(ss.sqlContext).run(tb_ZPDCT6123
       .select(TERM_MASTER.ZPDCT6123.COMPANYID, TERM_MASTER.ZPDCT6123.SAUPBU, TERM_MASTER.ZPDCT6123.PSPID, TERM_MASTER.ZPDCT6123.STG_GUBUN, TERM_MASTER.ZPDCT6123.MAT_GUBUN, TERM_MASTER.ZPDCT6123.WEEK))
