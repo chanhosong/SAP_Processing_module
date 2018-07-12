@@ -1,5 +1,6 @@
 package com.hhi.sap.analysis.functions
 
+import com.hhi.sap.config.DateTimeUtil
 import com.hhi.sap.main.SparkSessionWrapper
 import com.hhi.sap.table.bean.{BEAN_THD_MRPL_WEEK, BEAN_THD_MRPL_WEEK_COUNT}
 import com.hhi.sap.table.term.TERM_MASTER
@@ -7,10 +8,13 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.expressions.Window
 import org.apache.spark.sql.functions.row_number
+import org.slf4j.LoggerFactory
 
 import scala.util.{Failure, Success, Try}
 
 object MRPLTableUtils extends SparkSessionWrapper{
+  private val logger = LoggerFactory.getLogger(this.getClass)
+
   private val COMPANYID = TERM_MASTER.ZPDCT6123.COMPANYID
   private val SAUPBU = TERM_MASTER.ZPDCT6123.SAUPBU
   private val PSPID = TERM_MASTER.ZPDCT6123.PSPID
@@ -19,6 +23,9 @@ object MRPLTableUtils extends SparkSessionWrapper{
   private val MAT_GUBUN = TERM_MASTER.ZPDCT6123.MAT_GUBUN
   private val WEEK = TERM_MASTER.ZPDCT6123.WEEK
   private val COUNT = "count".toUpperCase()
+
+  private var PGMID = "Spark2.3.0.cloudera2"
+  private var CNAM = "A504863"
 
   def getMRPLRDD(df: DataFrame): RDD[BEAN_THD_MRPL_WEEK_COUNT] = {
     df.rdd.map(e => Tuple6(e.getAs(COMPANYID).toString,
@@ -49,6 +56,11 @@ object MRPLTableUtils extends SparkSessionWrapper{
 
   def mappingMRPLTable(df: DataFrame): DataFrame = {
     import ss.sqlContext.sparkSession.implicits._
+
+    if (logger.isDebugEnabled) {
+      PGMID = "[DEBUGMODE]Spark2.3.0.cloudera2"
+      CNAM = "[DEBUGMODE]A504863"
+    }
 
     df.map(e => {
       BEAN_THD_MRPL_WEEK(
@@ -83,7 +95,11 @@ object MRPLTableUtils extends SparkSessionWrapper{
         Try(e.getAs("17").toString) match { case Success(s) => s case Failure(s) => "0" },
         Try(e.getAs("18").toString) match { case Success(s) => s case Failure(s) => "0" },
         Try(e.getAs("19").toString) match { case Success(s) => s case Failure(s) => "0" },
-        Try(e.getAs("20").toString) match { case Success(s) => s case Failure(s) => "0" }
+        Try(e.getAs("20").toString) match { case Success(s) => s case Failure(s) => "0" },
+        PGMID,
+        CNAM,
+        DateTimeUtil.date,
+        DateTimeUtil.time
       )
     }).toDF()
   }
