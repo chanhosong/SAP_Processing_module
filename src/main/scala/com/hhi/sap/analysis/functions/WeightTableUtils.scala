@@ -1,16 +1,11 @@
 package com.hhi.sap.analysis.functions
 
-import com.hhi.sap.config.DateTimeUtil
 import com.hhi.sap.main.SparkSessionWrapper
-import com.hhi.sap.table.bean.{BEAN_THD_WEIGHT_WEEK, BEAN_THD_WEIGHT_WEEK_COUNT}
+import com.hhi.sap.table.bean.BEAN_THD_WEIGHT_WEEK_COUNT
 import com.hhi.sap.table.term.TERM_MASTER
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.DataFrame
-import org.apache.spark.sql.expressions.Window
-import org.apache.spark.sql.functions.row_number
 import org.slf4j.LoggerFactory
-
-import scala.util.{Failure, Success, Try}
 
 object WeightTableUtils extends SparkSessionWrapper{
   private val logger = LoggerFactory.getLogger(this.getClass)
@@ -49,61 +44,5 @@ object WeightTableUtils extends SparkSessionWrapper{
       .reduceByKey(_ + _)
       .map { case ((_companyid, _saupbu, _pspid, _stg_gubun, _mat_gubun), _menge) => (_companyid, _saupbu, _pspid, _stg_gubun, _mat_gubun, week, _menge) }
       .toDF(COMPANYID, SAUPBU, PSPID, STG_GUBUN, MAT_GUBUN, WEEK, MENGE)
-  }
-
-  def makeUnion(df: DataFrame, underRDD: DataFrame, upperRDD: DataFrame): DataFrame = df.union(underRDD).union(upperRDD)
-
-  def addSERNO(df: DataFrame): DataFrame = df.withColumn(TERM_MASTER.MRPL_WEEK.SERNO, row_number().over(Window.partitionBy(TERM_MASTER.MRPL_WEEK.COMPANYID).partitionBy(TERM_MASTER.MRPL_WEEK.SAUPBU).partitionBy(TERM_MASTER.MRPL_WEEK.PSPID).orderBy(TERM_MASTER.MRPL_WEEK.PSPID)))
-
-  def pivotTable(df: DataFrame): DataFrame = df.groupBy(COMPANYID, SAUPBU, PSPID, STG_GUBUN, MAT_GUBUN, SERNO).pivot(WEEK).sum(MENGE).na.fill(0)
-
-  def mappingMRPLTable(df: DataFrame): DataFrame = {
-    import ss.sqlContext.sparkSession.implicits._
-
-    if (logger.isDebugEnabled) {
-      PGMID = "[DEBUGMODE]Spark2.3.0.cloudera2"
-      CNAM = "[DEBUGMODE]A504863"
-    }
-
-    df.map(e => {
-      BEAN_THD_WEIGHT_WEEK(
-        e.getAs(COMPANYID),
-        e.getAs(SAUPBU),
-        e.getAs(PSPID),
-        e.getAs(SERNO).toString,
-        e.getAs(STG_GUBUN),
-        e.getAs(MAT_GUBUN),
-        Try(e.getAs("-5").toString) match { case Success(s) => s case Failure(s) => "0" },
-        Try(e.getAs("-4").toString) match { case Success(s) => s case Failure(s) => "0" },
-        Try(e.getAs("-3").toString) match { case Success(s) => s case Failure(s) => "0" },
-        Try(e.getAs("-2").toString) match { case Success(s) => s case Failure(s) => "0" },
-        Try(e.getAs("-1").toString) match { case Success(s) => s case Failure(s) => "0" },
-        Try(e.getAs("0").toString) match { case Success(s) => s case Failure(s) => "0" },
-        Try(e.getAs("1").toString) match { case Success(s) => s case Failure(s) => "0" },
-        Try(e.getAs("2").toString) match { case Success(s) => s case Failure(s) => "0" },
-        Try(e.getAs("3").toString) match { case Success(s) => s case Failure(s) => "0" },
-        Try(e.getAs("4").toString) match { case Success(s) => s case Failure(s) => "0" },
-        Try(e.getAs("5").toString) match { case Success(s) => s case Failure(s) => "0" },
-        Try(e.getAs("6").toString) match { case Success(s) => s case Failure(s) => "0" },
-        Try(e.getAs("7").toString) match { case Success(s) => s case Failure(s) => "0" },
-        Try(e.getAs("8").toString) match { case Success(s) => s case Failure(s) => "0" },
-        Try(e.getAs("9").toString) match { case Success(s) => s case Failure(s) => "0" },
-        Try(e.getAs("10").toString) match { case Success(s) => s case Failure(s) => "0" },
-        Try(e.getAs("11").toString) match { case Success(s) => s case Failure(s) => "0" },
-        Try(e.getAs("12").toString) match { case Success(s) => s case Failure(s) => "0" },
-        Try(e.getAs("13").toString) match { case Success(s) => s case Failure(s) => "0" },
-        Try(e.getAs("14").toString) match { case Success(s) => s case Failure(s) => "0" },
-        Try(e.getAs("15").toString) match { case Success(s) => s case Failure(s) => "0" },
-        Try(e.getAs("16").toString) match { case Success(s) => s case Failure(s) => "0" },
-        Try(e.getAs("17").toString) match { case Success(s) => s case Failure(s) => "0" },
-        Try(e.getAs("18").toString) match { case Success(s) => s case Failure(s) => "0" },
-        Try(e.getAs("19").toString) match { case Success(s) => s case Failure(s) => "0" },
-        Try(e.getAs("20").toString) match { case Success(s) => s case Failure(s) => "0" },
-        PGMID,
-        CNAM,
-        DateTimeUtil.date,
-        DateTimeUtil.time
-      )
-    }).toDF()
   }
 }
