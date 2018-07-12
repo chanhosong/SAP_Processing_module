@@ -12,9 +12,6 @@ class ANL_THD_WEIGHT_WEEK(sql: SQLContext) {
   private def genTable(zpdct6023: DataFrame, mara: DataFrame): DataFrame = {
     import sql.sparkSession.implicits._
 
-    zpdct6023.show()
-    mara.show()
-
     val weightRDD = WeightTableUtils.getWeightRDD(zpdct6023, mara)
 
     val underRDD = WeightTableUtils.getWeightTable(weightRDD.filter(_.week <= -5), -5)
