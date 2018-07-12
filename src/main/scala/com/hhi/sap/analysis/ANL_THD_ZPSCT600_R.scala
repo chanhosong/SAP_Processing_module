@@ -21,7 +21,7 @@ class ANL_THD_ZPSCT600_R(sql: SQLContext) {
     var PGMID = "Spark2.3.0.cloudera2"
     var CNAM = "A504863"
 
-    if (logger.isWarnEnabled) {
+    if (logger.isDebugEnabled) {
       PGMID = "[DEBUGMODE]Spark2.3.0.cloudera2"
       CNAM = "[DEBUGMODE]A504863"
     }
