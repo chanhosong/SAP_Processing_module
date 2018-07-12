@@ -12,14 +12,6 @@ class ANL_THD_MRPL_WEEK(sql: SQLContext) {
   private def genTable(zpdct6123: DataFrame): DataFrame = {
     import sql.sparkSession.implicits._
 
-    var PGMID = "Spark2.3.0.cloudera2"
-    var CNAM = "A504863"
-
-    if (logger.isDebugEnabled) {
-      PGMID = "[DEBUGMODE]Spark2.3.0.cloudera2"
-      CNAM = "[DEBUGMODE]A504863"
-    }
-
     val mrplRDD = MRPLTableUtils.getMRPLRDD(zpdct6123)
     val underRDD = MRPLTableUtils.getWeekTable(mrplRDD.filter(_.week <= -5), -5)
     val upperRDD = MRPLTableUtils.getWeekTable(mrplRDD.filter(_.week >= 20), 20)
