@@ -1,33 +1,29 @@
 package com.hhi.sap.analysis
 
-import com.hhi.sap.analysis.functions.MRPLTableUtils
+import com.hhi.sap.analysis.functions.WeightTableUtils
 import org.apache.spark.sql.{DataFrame, SQLContext}
 import org.slf4j.LoggerFactory
 
 class ANL_THD_WEIGHT_WEEK(sql: SQLContext) {
   private val logger = LoggerFactory.getLogger(this.getClass)
 
-  def run(zpdct6023: DataFrame): DataFrame = genTable(zpdct6023)
+  def run(zpdct6023: DataFrame, mara: DataFrame): DataFrame = genTable(zpdct6023, mara)
 
-  private def genTable(zpdct6023: DataFrame): DataFrame = {
+  private def genTable(zpdct6023: DataFrame, mara: DataFrame): DataFrame = {
     import sql.sparkSession.implicits._
 
-    var PGMID = "Spark2.3.0.cloudera2"
-    var CNAM = "A504863"
+    zpdct6023.show()
+    mara.show()
 
-    if (logger.isWarnEnabled) {
-      PGMID = "[DEBUGMODE]Spark2.3.0.cloudera2"
-      CNAM = "[DEBUGMODE]A504863"
-    }
+    val weightRDD = WeightTableUtils.getWeightRDD(zpdct6023, mara)
 
-    val mrplRDD = MRPLTableUtils.getMRPLRDD(zpdct6023)
-    val underRDD = MRPLTableUtils.getWeekTable(mrplRDD.filter(_.week <= -5), -5)
-    val upperRDD = MRPLTableUtils.getWeekTable(mrplRDD.filter(_.week >= 20), 20)
+    val underRDD = WeightTableUtils.getWeightTable(weightRDD.filter(_.week <= -5), -5)
+    val upperRDD = WeightTableUtils.getWeightTable(weightRDD.filter(_.week >= 20), 20)
 
-    MRPLTableUtils
-      .getUnion(mrplRDD.filter(-4 until 19 contains _.week).toDF(), underRDD, upperRDD)
-      .transform(MRPLTableUtils.addSERNO)
-      .transform(MRPLTableUtils.pivotTable)
-      .transform(MRPLTableUtils.mappingMRPLTable)
+    WeightTableUtils
+      .makeUnion(weightRDD.filter(-4 until 19 contains _.week).toDF(), underRDD, upperRDD)
+      .transform(WeightTableUtils.addSERNO)
+      .transform(WeightTableUtils.pivotTable)
+      .transform(WeightTableUtils.mappingMRPLTable)
   }
 }
