@@ -21,6 +21,7 @@ object TransformUtils {
   private val STG_GUBUN = TERM_MASTER.ZPDCT6023.STG_GUBUN
   private val MAT_GUBUN = TERM_MASTER.ZPDCT6023.MAT_GUBUN
   private val WEEK = TERM_MASTER.ZPDCT6023.WEEK
+  private val BRGEW = TERM_MASTER.ZPDCT6023.BRGEW
   private val MENGE = TERM_MASTER.ZPDCT6023.MENGE
   private val COUNT = "count".toUpperCase()
 
@@ -31,7 +32,7 @@ object TransformUtils {
 
   def addSERNO(df: DataFrame): DataFrame = df.withColumn(TERM_MASTER.MRPL_WEEK.SERNO, row_number().over(Window.partitionBy(TERM_MASTER.MRPL_WEEK.COMPANYID).partitionBy(TERM_MASTER.MRPL_WEEK.SAUPBU).partitionBy(TERM_MASTER.MRPL_WEEK.PSPID).orderBy(TERM_MASTER.MRPL_WEEK.PSPID)))
 
-  def pivotTableByMenge(df: DataFrame): DataFrame = df.groupBy(COMPANYID, SAUPBU, PSPID, STG_GUBUN, MAT_GUBUN).pivot(WEEK).sum(MENGE).na.fill(0)
+  def pivotTableByBrgew(df: DataFrame): DataFrame = df.groupBy(COMPANYID, SAUPBU, PSPID, STG_GUBUN, MAT_GUBUN).pivot(WEEK).sum(BRGEW).na.fill(0)
 
   def pivotTableByCount(df: DataFrame): DataFrame = df.groupBy(COMPANYID, SAUPBU, PSPID, STG_GUBUN, MAT_GUBUN).pivot(WEEK).sum(COUNT).na.fill(0)
 
