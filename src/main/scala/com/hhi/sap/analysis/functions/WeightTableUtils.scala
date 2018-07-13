@@ -33,7 +33,7 @@ object WeightTableUtils extends SparkSessionWrapper{
         e.getAs(WEEK).toString.toInt,
         e.getAs(MENGE).toString.toDouble))
       .map { case (_companyid, _saupbu, _pspid, _stg_gubun, _mat_gubun, _week, _menge) => ((_companyid, _saupbu, _pspid, _stg_gubun, _mat_gubun, _week), _menge) }
-      .reduceByKey(_ + _)
+      .reduceByKey(_+_)
       .map(e => BEAN_THD_WEIGHT_WEEK_COUNT(e._1._1, e._1._2, e._1._3, e._1._4, e._1._5, e._1._6, e._2))
   }
 
@@ -41,7 +41,7 @@ object WeightTableUtils extends SparkSessionWrapper{
     import ss.sqlContext.sparkSession.implicits._
 
     weekRDD.map { BEAN_THD_WEIGHT_WEEK_TEMP => ((BEAN_THD_WEIGHT_WEEK_TEMP.companyid, BEAN_THD_WEIGHT_WEEK_TEMP.saupbu, BEAN_THD_WEIGHT_WEEK_TEMP.pspid, BEAN_THD_WEIGHT_WEEK_TEMP.stg_gubun, BEAN_THD_WEIGHT_WEEK_TEMP.mat_gubun), BEAN_THD_WEIGHT_WEEK_TEMP.menge) }
-      .reduceByKey(_ + _)
+      .reduceByKey(_+_)
       .map { case ((_companyid, _saupbu, _pspid, _stg_gubun, _mat_gubun), _menge) => (_companyid, _saupbu, _pspid, _stg_gubun, _mat_gubun, week, _menge) }
       .toDF(COMPANYID, SAUPBU, PSPID, STG_GUBUN, MAT_GUBUN, WEEK, MENGE)
   }

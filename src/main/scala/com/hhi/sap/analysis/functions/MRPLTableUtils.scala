@@ -30,7 +30,7 @@ object MRPLTableUtils extends SparkSessionWrapper{
       e.getAs(MAT_GUBUN).toString,
       e.getAs(WEEK).toString.toInt))
       .map { case (_companyid, _saupbu, _pspid, _stg_gubun, _mat_gubun, _week) => ((_companyid, _saupbu, _pspid, _stg_gubun, _mat_gubun, _week), 1) }
-      .reduceByKey(_ + _)
+      .reduceByKey(_+_)
       .map(e => BEAN_THD_MRPL_WEEK_COUNT(e._1._1, e._1._2, e._1._3, e._1._4, e._1._5, e._1._6, e._2))
   }
 
@@ -38,7 +38,7 @@ object MRPLTableUtils extends SparkSessionWrapper{
     import ss.sqlContext.sparkSession.implicits._
 
     weekRDD.map { BEAN_THD_MRPL_WEEK_TEMP => ((BEAN_THD_MRPL_WEEK_TEMP.companyid, BEAN_THD_MRPL_WEEK_TEMP.saupbu, BEAN_THD_MRPL_WEEK_TEMP.pspid, BEAN_THD_MRPL_WEEK_TEMP.stg_gubun, BEAN_THD_MRPL_WEEK_TEMP.mat_gubun), BEAN_THD_MRPL_WEEK_TEMP.count) }
-      .reduceByKey(_ + _)
+      .reduceByKey(_+_)
       .map { case ((_companyid, _saupbu, _pspid, _stg_gubun, _mat_gubun), _count) => (_companyid, _saupbu, _pspid, _stg_gubun, _mat_gubun, weekNumber, _count) }
       .toDF(COMPANYID, SAUPBU, PSPID, STG_GUBUN, MAT_GUBUN, WEEK, COUNT)
   }
