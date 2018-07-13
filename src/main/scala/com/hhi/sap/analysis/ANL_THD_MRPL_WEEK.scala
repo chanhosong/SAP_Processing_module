@@ -19,8 +19,8 @@ class ANL_THD_MRPL_WEEK(sql: SQLContext) {
 
     TransformUtils
       .makeUnion(mrplRDD.filter(-4 until 19 contains _.week).toDF(), underRDD, upperRDD)
-      .transform(TransformUtils.addSERNO)
       .transform(TransformUtils.pivotTableByCount)
       .transform(TransformUtils.mappingTable)
+      .transform(TransformUtils.addSERNO)
   }
 }

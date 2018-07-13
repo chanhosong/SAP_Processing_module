@@ -31,9 +31,9 @@ object TransformUtils {
 
   def addSERNO(df: DataFrame): DataFrame = df.withColumn(TERM_MASTER.MRPL_WEEK.SERNO, row_number().over(Window.partitionBy(TERM_MASTER.MRPL_WEEK.COMPANYID).partitionBy(TERM_MASTER.MRPL_WEEK.SAUPBU).partitionBy(TERM_MASTER.MRPL_WEEK.PSPID).orderBy(TERM_MASTER.MRPL_WEEK.PSPID)))
 
-  def pivotTableByMenge(df: DataFrame): DataFrame = df.groupBy(COMPANYID, SAUPBU, PSPID, STG_GUBUN, MAT_GUBUN, SERNO).pivot(WEEK).sum(MENGE).na.fill(0)
+  def pivotTableByMenge(df: DataFrame): DataFrame = df.groupBy(COMPANYID, SAUPBU, PSPID, STG_GUBUN, MAT_GUBUN).pivot(WEEK).sum(MENGE).na.fill(0)
 
-  def pivotTableByCount(df: DataFrame): DataFrame = df.groupBy(COMPANYID, SAUPBU, PSPID, STG_GUBUN, MAT_GUBUN, SERNO).pivot(WEEK).sum(COUNT).na.fill(0)
+  def pivotTableByCount(df: DataFrame): DataFrame = df.groupBy(COMPANYID, SAUPBU, PSPID, STG_GUBUN, MAT_GUBUN).pivot(WEEK).sum(COUNT).na.fill(0)
 
   def mappingTable(df: DataFrame): DataFrame = {
     import ss.sqlContext.sparkSession.implicits._
@@ -48,7 +48,6 @@ object TransformUtils {
         e.getAs(COMPANYID),
         e.getAs(SAUPBU),
         e.getAs(PSPID),
-        e.getAs(SERNO).toString,
         e.getAs(STG_GUBUN),
         e.getAs(MAT_GUBUN),
         Try(e.getAs("-5").toString) match { case Success(s) => s case Failure(s) => "0" },
