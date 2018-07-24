@@ -2,7 +2,8 @@ package com.hhi.sap.table.term
 
 class TERM_MARC {
   val DATABASE = "sap".toUpperCase()
-  val TABLE = s"$DATABASE.thd_marc".toUpperCase()
+  val TABLENAME = "thd_marc".toUpperCase()
+  val TABLE = s"$DATABASE.$TABLENAME".toUpperCase()
 
   val COMPANYID = "companyid".toUpperCase()
   val SAUPBU = "saupbu".toUpperCase()

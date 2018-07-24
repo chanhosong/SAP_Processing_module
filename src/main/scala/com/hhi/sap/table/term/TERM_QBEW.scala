@@ -2,7 +2,8 @@ package com.hhi.sap.table.term
 
 class TERM_QBEW {
   val DATABASE = "sap".toUpperCase()
-  val TABLE = s"$DATABASE.thd_qbew".toUpperCase()
+  val TABLENAME = "thd_qbew".toUpperCase()
+  val TABLE = s"$DATABASE.$TABLENAME".toUpperCase()
 
   val COMPANYID = "companyid".toUpperCase()
   val SAUPBU = "saupbu".toUpperCase()
