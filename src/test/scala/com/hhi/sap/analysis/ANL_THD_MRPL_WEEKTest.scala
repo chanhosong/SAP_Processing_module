@@ -3,6 +3,7 @@ package com.hhi.sap.analysis
 import com.hhi.sap.main.SparkSessionTestWrapper
 import com.hhi.sap.table.term.TERM_MASTER
 import com.hhi.sap.utils.SparkFileReader
+import org.apache.spark.sql.functions._
 import org.scalatest.FlatSpec
 import org.slf4j.LoggerFactory
 
@@ -10,56 +11,20 @@ class ANL_THD_MRPL_WEEKTest extends FlatSpec with SparkSessionTestWrapper{
   private val logger = LoggerFactory.getLogger(this.getClass)
 
   private val INPUTPATH = "src/test/resources"
-  private val TABLE4 = "/output/table4"
+  private val TABLE3 = "/output/table3"
   private val FILENPATH_ZPSCT600 = "/ZPDCV6021/*"
-  private val FILENPATH_ZPDCT6023 = "/ZPDCT6023/*"
-  private val FILEPATH_EBAN = "/EBAN/*"
-  private val FILEPATH_MARA = "/MARA/*"
+  private val FILENPATH_ZPDCT6123 = "/ZPDCT6123/*"
 
-  "simple code1" should "be tested." in {
-    List("apple", "apple", "orange", "apple", "mango", "orange")
-      .map(word => (word, 1)).groupBy(_._1)
-      .map(word => (word._1, word._2.foldLeft(0)((sum,c) => sum+ c._2)))
-      .foreach(println)
+  "ZPDCT6123" should "be counted." in new SparkFileReader {
+    println(getFolder(INPUTPATH+FILENPATH_ZPDCT6123).count())
   }
 
-  "simple code2" should "be tested." in {
-    ss.sparkContext.parallelize(List(
-      ("West",  "Apple",  2.0, 10),
-      ("West",  "Apple",  3.0, 15),
-      ("West",  "Orange", 5.0, 15),
-      ("South", "Orange", 3.0, 9),
-      ("South", "Orange", 6.0, 18),
-      ("East",  "Milk",   5.0, 5)))
-      .map{ case (store, prod, amt, units) => ((store, prod), (amt, amt, amt, units)) }
-      .reduceByKey((x, y) => (x._1 + y._1, math.min(x._2, y._2), math.max(x._3, y._3), x._4 + y._4))
-      .collect.foreach(println)
+  "ZPDCT6123" should "make dataframe." in new SparkFileReader {
+    //"Please generate a table ZPDCT6123 on class ANL_THD_ZPSCT600_RTest"
+    val tb_ZPDCT6123 = ss.read.option("header", "true").csv(INPUTPATH + TABLE3)
 
-    ss.sparkContext.parallelize(List(
-//      ("West",  "Apple1",  -9.0, 10),
-      ("West",  "Apple1",  -4.0, 10),
-      ("West",  "Apple1",  -5.0, 10),
-      ("West",  "Apple",  2.0, 10),
-      ("West",  "Apple",  3.0, 15),
-      ("West",  "Orange", 5.0, 15),
-      ("South", "Orange", 3.0, 9),
-      ("South", "Orange", 6.0, 18),
-      ("East",  "Milk",   5.0, 5)))
-      .map{ case (store, prod, amt, units) => ((store, prod), (amt, amt, amt, units)) }
-      .reduceByKey((x, y) => ( if(x._1 < -5) x._1 + y._1 else 0, math.min(x._2, y._2), math.max(x._3, y._3), x._4 + y._4))
-      .collect.foreach(println)
-  }
-
-  "ZPDCT6023" should "be counted." in new SparkFileReader {
-    println(getFolder(INPUTPATH+FILENPATH_ZPDCT6023).count())
-  }
-
-  "ZPDCT6023 " should "make dataframe." in new SparkFileReader {
-    //"Please be generated a table ZPDCT6023 on class ANL_THD_ZPSCT600_RTest "
-    val tb_ZPDCT6023 = ss.read.option("header", "true").csv(INPUTPATH + TABLE4)
-
-    new ANL_THD_MRPL_WEEK(ss.sqlContext).run(tb_ZPDCT6023
-      .select(TERM_MASTER.ZPDCT6023.COMPANYID, TERM_MASTER.ZPDCT6023.SAUPBU, TERM_MASTER.ZPDCT6023.ZTRKNO, TERM_MASTER.ZPDCT6023.ZREVNO, TERM_MASTER.ZPDCT6023.PSPID, TERM_MASTER.ZPDCT6023.STG_GUBUN, TERM_MASTER.ZPDCT6023.MAT_GUBUN, TERM_MASTER.ZPDCT6023.WEEK))
+    new ANL_THD_MRPL_WEEK(ss.sqlContext).run(tb_ZPDCT6123
+      .select(TERM_MASTER.ZPDCT6123.COMPANYID, TERM_MASTER.ZPDCT6123.SAUPBU, TERM_MASTER.ZPDCT6123.PSPID, TERM_MASTER.ZPDCT6123.STG_GUBUN, TERM_MASTER.ZPDCT6123.MAT_GUBUN, TERM_MASTER.ZPDCT6123.WEEK))
       .show()
   }
 }

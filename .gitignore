@@ -10,3 +10,6 @@ spark-defaults.conf
 spark-warehouse/
 src/main/resources/*
 src/test/resources/*
+
+!src/main/resources/Log4j.properties
+!src/test/resources/Log4j.properties
