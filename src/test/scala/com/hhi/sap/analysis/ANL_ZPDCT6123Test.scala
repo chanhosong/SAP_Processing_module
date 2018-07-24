@@ -11,20 +11,20 @@ class ANL_ZPDCT6123Test extends FlatSpec with SparkSessionTestWrapper{
 
   private val OUTPUTPATH = "src/test/resources"
   private val TABLE3 = "/output/table3"
-  private val FILENPATH_ZPSCT600 = "/ZPDCV6021/*"
-  private val FILENPATH_ZPDCT6123 = "/ZPDCT6123/*"
+  private val FILEPATH_ZPSCT600 = "/ZPDCV6021/*"
+  private val FILEPATH_ZPDCT6123 = "/ZPDCT6123/*"
   private val FILEPATH_EBAN = "/EBAN/*"
   private val FILEPATH_MARA = "/MARA/*"
 
   "ZPDCT6123" should "be counted." in new SparkFileReader {
-    println(getFolder(OUTPUTPATH+FILENPATH_ZPDCT6123).count())
+    println(getFolder(OUTPUTPATH+FILEPATH_ZPDCT6123).count())
     println(getFolder(OUTPUTPATH+FILEPATH_EBAN).count())
     println(getFolder(OUTPUTPATH+FILEPATH_MARA).count())
   }
 
   "ZPDCT6123 " should "make dataframe." in new SparkFileReader {
-    val tb_ZPSCT600 = ss.read.option("header", "true").csv(OUTPUTPATH+FILENPATH_ZPSCT600)
-    val ZPDCT6123 = getFolder(OUTPUTPATH+FILENPATH_ZPDCT6123).withColumnRenamed("bnfpo".toUpperCase(), TERM_MASTER.ZPDCT6123.BFNPO).withColumnRenamed("zkvndcod".toUpperCase(), TERM_MASTER.ZPDCT6123.ZKGVNDCOD)
+    val tb_ZPSCT600 = ss.read.option("header", "true").csv(OUTPUTPATH+FILEPATH_ZPSCT600)
+    val ZPDCT6123 = getFolder(OUTPUTPATH+FILEPATH_ZPDCT6123).withColumnRenamed("bnfpo".toUpperCase(), TERM_MASTER.ZPDCT6123.BFNPO).withColumnRenamed("zkvndcod".toUpperCase(), TERM_MASTER.ZPDCT6123.ZKGVNDCOD)
     val eban = getFolder(OUTPUTPATH+FILEPATH_EBAN).withColumnRenamed("bnfpo".toUpperCase(), TERM_MASTER.EBAN.BFNPO)
     val mara = getFolder(OUTPUTPATH+FILEPATH_MARA)
 
@@ -35,8 +35,8 @@ class ANL_ZPDCT6123Test extends FlatSpec with SparkSessionTestWrapper{
   }
 
   "ZPDCT6123 " should "make csv." in new SparkFileReader {
-    val tb_ZPSCT600 = ss.read.option("header", "true").csv(OUTPUTPATH+FILENPATH_ZPSCT600)
-    val ZPDCT6123 = getFolder(OUTPUTPATH+FILENPATH_ZPDCT6123).withColumnRenamed("bnfpo".toUpperCase(), TERM_MASTER.ZPDCT6123.BFNPO).withColumnRenamed("zkvndcod".toUpperCase(), TERM_MASTER.ZPDCT6123.ZKGVNDCOD)
+    val tb_ZPSCT600 = ss.read.option("header", "true").csv(OUTPUTPATH+FILEPATH_ZPSCT600)
+    val ZPDCT6123 = getFolder(OUTPUTPATH+FILEPATH_ZPDCT6123).withColumnRenamed("bnfpo".toUpperCase(), TERM_MASTER.ZPDCT6123.BFNPO).withColumnRenamed("zkvndcod".toUpperCase(), TERM_MASTER.ZPDCT6123.ZKGVNDCOD)
     val eban = getFolder(OUTPUTPATH+FILEPATH_EBAN).withColumnRenamed("bnfpo".toUpperCase(), TERM_MASTER.EBAN.BFNPO)
     val mara = getFolder(OUTPUTPATH+FILEPATH_MARA)
 
