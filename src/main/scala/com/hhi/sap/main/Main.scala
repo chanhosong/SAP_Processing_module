@@ -61,8 +61,8 @@ object Main extends App with SparkSessionWrapper{
   val df_MARA = new GEN_MARA(ss.sqlContext).run(tb_MARA)
   val df_MARC = new GEN_MARC(ss.sqlContext).run(tb_MARC)
   val df_MAKT = new GEN_MAKT(ss.sqlContext).run(tb_MAKT)
-  val df_QBEW = new GEN_QBEW(ss.sqlContext).run(tb_QBEW)
-  val df_MBEW = new GEN_MBEW(ss.sqlContext).run(tb_MBEW)
+  val df_QBEW = new GEN_QBEW(ss.sqlContext).run(tb_QBEW).withColumnRenamed("BWKEY", TERM_MASTER.QBEW.WERKS).withColumnRenamed("PSPNR", TERM_MASTER.QBEW.PSPID)
+  val df_MBEW = new GEN_MBEW(ss.sqlContext).run(tb_MBEW).withColumnRenamed("BWKEY", TERM_MASTER.MBEW.WERKS)
 
   //10,11,12: Weekly
   val df_MRPL_WEEK = new ANL_THD_MRPL_WEEK(ss.sqlContext).run(tb_ZPDCT6123.select(TERM_MASTER.ZPDCT6123.COMPANYID, TERM_MASTER.ZPDCT6123.SAUPBU, TERM_MASTER.ZPDCT6123.PSPID, TERM_MASTER.ZPDCT6123.STG_GUBUN, TERM_MASTER.ZPDCT6123.MAT_GUBUN, TERM_MASTER.ZPDCT6123.WEEK))

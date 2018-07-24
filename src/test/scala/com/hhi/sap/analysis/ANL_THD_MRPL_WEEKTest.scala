@@ -20,7 +20,7 @@ class ANL_THD_MRPL_WEEKTest extends FlatSpec with SparkSessionTestWrapper{
   }
 
   "ZPDCT6123" should "make dataframe." in new SparkFileReader {
-    //"Please be generated a table ZPDCT6123 on class ANL_THD_ZPSCT600_RTest "
+    //"Please generate a table ZPDCT6123 on class ANL_THD_ZPSCT600_RTest"
     val tb_ZPDCT6123 = ss.read.option("header", "true").csv(INPUTPATH + TABLE3)
 
     new ANL_THD_MRPL_WEEK(ss.sqlContext).run(tb_ZPDCT6123
