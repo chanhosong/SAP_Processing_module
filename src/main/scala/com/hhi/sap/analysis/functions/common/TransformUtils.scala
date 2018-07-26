@@ -24,6 +24,7 @@ object TransformUtils {
   private val BRGEW = TERM_MASTER.ZPDCT6023.BRGEW
   private val MENGE = TERM_MASTER.ZPDCT6023.MENGE
   private val COUNT = "count".toUpperCase()
+  private val AMOUNT = "amount".toUpperCase()
 
   private var PGMID = "Spark2.3.0.cloudera2"
   private var CNAM = "A504863"
@@ -35,6 +36,8 @@ object TransformUtils {
   def pivotTableByBrgew(df: DataFrame): DataFrame = df.groupBy(COMPANYID, SAUPBU, PSPID, STG_GUBUN, MAT_GUBUN).pivot(WEEK).sum(BRGEW).na.fill(0)
 
   def pivotTableByCount(df: DataFrame): DataFrame = df.groupBy(COMPANYID, SAUPBU, PSPID, STG_GUBUN, MAT_GUBUN).pivot(WEEK).sum(COUNT).na.fill(0)
+
+  def pivotTableByAmount(df: DataFrame): DataFrame = df.groupBy(COMPANYID, SAUPBU, PSPID, STG_GUBUN, MAT_GUBUN).pivot(WEEK).sum(AMOUNT).na.fill(0)
 
   def mappingTable(df: DataFrame): DataFrame = {
     import ss.sqlContext.sparkSession.implicits._

@@ -89,16 +89,18 @@ class ANL_THD_AMT_WEEK(sql: SQLContext) {
       TERM_MASTER.ZPDCT6123.WEEK
     )
 
-    val amtRDD1 = AMTTableUtils.getAMTRDD(joinedRDD1)
-    val amtRDD2 = AMTTableUtils.getAMTRDD(joinedRDD2)
-    val amtRDD = amtRDD1.union(amtRDD2)
-    val underRDD = AMTTableUtils.getWeekTable(amtRDD.filter(_.week <= -5), -5)
-    val upperRDD = AMTTableUtils.getWeekTable(amtRDD.filter(_.week >= 20), 20)
+    val amtRDD = AMTTableUtils.getAMTRDD(joinedRDD1).union(AMTTableUtils.getAMTRDD(joinedRDD2))
 
-//    TransformUtils
-//      .makeUnion(amtRDD.filter(-4 until 19 contains _.week).toDF(), underRDD, upperRDD)
-//      .transform(TransformUtils.pivotTableByCount)
-//      .transform(TransformUtils.mappingTable)
-//      .transform(TransformUtils.addSERNO)
+    amtRDD.toDF().show()
+    val underDF = AMTTableUtils.getWeekTable(amtRDD.filter(_.week <= -5), -5)
+    val upperDF = AMTTableUtils.getWeekTable(amtRDD.filter(_.week >= 20), 20)
+
+
+    TransformUtils
+      .makeUnion(amtRDD.filter(-4 until 19 contains _.week).toDF(), underDF, upperDF)
+      .transform(TransformUtils.pivotTableByAmount)
+      .transform(TransformUtils.mappingTable)
+      .transform(TransformUtils.addSERNO)
+    null
   }
 }
