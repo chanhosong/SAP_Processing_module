@@ -14,4 +14,5 @@ object TERM_MASTER {
   val ZPSCT600 = new TERM_ZPSCT600
   val ZPSCT600_R = new TERM_ZPSCT600_R
   val WEEK = new TERM_WEEK
+  val MONTH = new TERM_MONTH
 }
