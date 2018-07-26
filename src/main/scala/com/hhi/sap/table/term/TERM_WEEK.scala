@@ -1,8 +1,10 @@
 package com.hhi.sap.table.term
 
-class TERM_MRPL_WEEK {
+class TERM_WEEK {
   val DATABASE = "sap"
-  val TABLE = s"$DATABASE.thd_mrpl_week"
+  val TABLE11 = s"$DATABASE.thd_mrpl_week"
+  val TABLE12 = s"$DATABASE.thd_weight_week"
+  val TABLE13 = s"$DATABASE.thd_amount_week"
 
   val COMPANYID = "companyid"
   val SAUPBU = "saupbu"

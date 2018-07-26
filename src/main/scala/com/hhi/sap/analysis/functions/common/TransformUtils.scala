@@ -31,7 +31,7 @@ object TransformUtils {
 
   def makeUnion(df: DataFrame, underRDD: DataFrame, upperRDD: DataFrame): DataFrame = df.union(underRDD).union(upperRDD)
 
-  def addSERNO(df: DataFrame): DataFrame = df.withColumn(TERM_MASTER.MRPL_WEEK.SERNO, row_number().over(Window.partitionBy(TERM_MASTER.MRPL_WEEK.COMPANYID).partitionBy(TERM_MASTER.MRPL_WEEK.SAUPBU).partitionBy(TERM_MASTER.MRPL_WEEK.PSPID).orderBy(TERM_MASTER.MRPL_WEEK.PSPID)))
+  def addSERNO(df: DataFrame): DataFrame = df.withColumn(TERM_MASTER.WEEK.SERNO, row_number().over(Window.partitionBy(TERM_MASTER.WEEK.COMPANYID).partitionBy(TERM_MASTER.WEEK.SAUPBU).partitionBy(TERM_MASTER.WEEK.PSPID).orderBy(TERM_MASTER.WEEK.PSPID)))
 
   def pivotTableByBrgew(df: DataFrame): DataFrame = df.groupBy(COMPANYID, SAUPBU, PSPID, STG_GUBUN, MAT_GUBUN).pivot(WEEK).sum(BRGEW).na.fill(0)
 
