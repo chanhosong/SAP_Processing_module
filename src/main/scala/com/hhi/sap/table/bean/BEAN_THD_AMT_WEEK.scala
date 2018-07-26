@@ -1,0 +1,3 @@
+package com.hhi.sap.table.bean
+
+case class BEAN_THD_AMT_WEEK(COMPANYID: String, SAUPBU: String, PSPID: String, SERNO: String, STG_GUBUN: String, MAT_GUBUN: String, WCM5: String, WCM4: String, WCM3: String, WCM2: String, WCM1: String, WC: String, WCP1: String, WCP2: String, WCP3: String, WCP4: String, WCP5: String, WCP6: String, WCP7: String, WCP8: String, WCP9: String, WCP10: String, WCP11: String, WCP12: String, WCP13: String, WCP14: String, WCP15: String, WCP16: String, WCP17: String, WCP18: String, WCP19: String, WCP20: String, WCP21: String, WCP22: String, WCP23: String, WCP24: String, WCP25: String, PGMID: String, CNAM: String, CDAT: String, CTIM: String)
