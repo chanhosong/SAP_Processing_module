@@ -90,17 +90,13 @@ class ANL_THD_AMT_WEEK(sql: SQLContext) {
     )
 
     val amtRDD = AMTTableUtils.getAMTRDD(joinedRDD1).union(AMTTableUtils.getAMTRDD(joinedRDD2))
-
-    amtRDD.toDF().show()
     val underDF = AMTTableUtils.getWeekTable(amtRDD.filter(_.week <= -5), -5)
     val upperDF = AMTTableUtils.getWeekTable(amtRDD.filter(_.week >= 20), 20)
-
 
     TransformUtils
       .makeUnion(amtRDD.filter(-4 until 19 contains _.week).toDF(), underDF, upperDF)
       .transform(TransformUtils.pivotTableByAmount)
       .transform(TransformUtils.mappingTable)
       .transform(TransformUtils.addSERNO)
-    null
   }
 }
