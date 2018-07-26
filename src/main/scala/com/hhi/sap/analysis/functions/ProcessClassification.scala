@@ -5,25 +5,30 @@ object ProcessClassification {
   private val WRONG_PARSE = "WRONG PARSE"
 
   def getSTG_GUBUN(zmidactno: String, zhdrmatnr: String): String = {
-    val (zzwkstg, zzwktyp) = (zmidactno.substring(11), zmidactno.substring(12, 13))
 
-    zzwkstg match {
-      case "A" | "B" => "1"
-      case "C" => if (Option(zzwktyp).isEmpty) null else if (zzwktyp.contains("21")) "2" else "1"
-      case "F" => "3"
-      case "G" | "H" | "J"  => "5"
-      case "K" | "L" | "M" => "6"
-      case "P" => "7"
-      case "R" => "8"
-      case x =>
-        if (Option(x).isEmpty) "NULL"
-        else if (Option(zhdrmatnr).isEmpty) "NULL"
-        else zhdrmatnr match {
-        case x:String =>
-          if(Option(x).isEmpty) "NULL"
-          else if (x.matches(matchShipID)) "4"
-          else "9"
+    if(Option(zmidactno).isDefined && Option(zmidactno).isDefined){
+      val (zzwkstg, zzwktyp) = (zmidactno.substring(11), zmidactno.substring(12, 13))
+
+      zzwkstg match {
+        case "A" | "B" => "1"
+        case "C" => if (Option(zzwktyp).isEmpty) null else if (zzwktyp.contains("21")) "2" else "1"
+        case "F" => "3"
+        case "G" | "H" | "J"  => "5"
+        case "K" | "L" | "M" => "6"
+        case "P" => "7"
+        case "R" => "8"
+        case x =>
+          if (Option(x).isEmpty) "NULL"
+          else if (Option(zhdrmatnr).isEmpty) "NULL"
+          else zhdrmatnr match {
+            case x:String =>
+              if(Option(x).isEmpty) "NULL"
+              else if (x.matches(matchShipID)) "4"
+              else "9"
+          }
       }
+    } else {
+      MATCH_FAIL
     }
   }
 
@@ -31,39 +36,43 @@ object ProcessClassification {
     val REGEX_PAINT = "[P|T|D|G|Q|R]"
     val REGEX_PAINT_NOT = "[^P|T|D|G|Q|R]"
 
-    idnrk.substring(6,8) match {
-      case "PP" => "A"
-      case _ => lgort match {
-        case "PC50" =>
-          if (Option(paintgbn).isEmpty) "NULL"
-          else if (paintgbn.matches(REGEX_PAINT)) "B"
-          else if (paintgbn.matches(REGEX_PAINT_NOT)) "C"
-          else null
-        case x:String =>
-          if (Option(x).isEmpty) "NULL"
-          else zzmgroup match {
-            case "JY" => "D"
-            case "JN" => "E"
-            case "JU" => "F"
-            case "JT" => "G"
-            case "JC" => "H"
-            case "JL" => "I"
-            case "JW" => "J"
-            case "JD" => "K"
-            case "CV" => "M"
-            case "CA" => "N"
-            case "CB" => "O"
-            case "CF" | "CG" => "P"
-            case "CO" | "CR" => "Q"
-            case "CL" | "CM" => "R"
-            case "CP" => "S"
-            case "CQ" => "T"
-            case x:String =>
-              if (Option(x).isEmpty) "NULL"
-              else if (x.startsWith("J")) "L"
-              else MATCH_FAIL
+    if(Option(idnrk).isDefined) {
+      idnrk.substring(6, 8) match {
+        case "PP" => "A"
+        case _ => lgort match {
+          case "PC50" =>
+            if (Option(paintgbn).isEmpty) "NULL"
+            else if (paintgbn.matches(REGEX_PAINT)) "B"
+            else if (paintgbn.matches(REGEX_PAINT_NOT)) "C"
+            else null
+          case x: String =>
+            if (Option(x).isEmpty) "NULL"
+            else zzmgroup match {
+              case "JY" => "D"
+              case "JN" => "E"
+              case "JU" => "F"
+              case "JT" => "G"
+              case "JC" => "H"
+              case "JL" => "I"
+              case "JW" => "J"
+              case "JD" => "K"
+              case "CV" => "M"
+              case "CA" => "N"
+              case "CB" => "O"
+              case "CF" | "CG" => "P"
+              case "CO" | "CR" => "Q"
+              case "CL" | "CM" => "R"
+              case "CP" => "S"
+              case "CQ" => "T"
+              case x: String =>
+                if (Option(x).isEmpty) "NULL"
+                else if (x.startsWith("J")) "L"
+                else MATCH_FAIL
+            }
         }
       }
+    } else {
+      MATCH_FAIL
     }
   }
 
