@@ -20,7 +20,7 @@ class ANL_THD_WEIGHT_WEEKTest extends FlatSpec with SparkSessionTestWrapper{
     println(getFolder(INPUTPATH+FILENPATH_MARA).count())
   }
 
-  "ZPDCT6023" should "make dataframe." in new SparkFileReader {
+  "WEIGHT_WEEK" should "make dataframe." in new SparkFileReader {
     //Please generate a table ZPDCT6023 on class ANL_THD_ZPSCT600_RTest
     val tb_ZPDCT6023 = ss.read.option("header", "true").csv(INPUTPATH + TABLE4)
     val tb_MARA = ss.read.option("header", "true").csv(INPUTPATH + FILENPATH_MARA)

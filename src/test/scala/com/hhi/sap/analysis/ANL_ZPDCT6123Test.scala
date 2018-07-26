@@ -14,7 +14,7 @@ class ANL_ZPDCT6123Test extends FlatSpec with SparkSessionTestWrapper{
   private val FILEPATH_ZPSCT600 = "/ZPDCV6021/*"
   private val FILEPATH_ZPDCT6123 = "/ZPDCT6123/*"
   private val FILEPATH_EBAN = "/EBAN/*"
-  private val FILEPATH_MARA = "/MARA/*"
+  private val FILEPATH_MARA = "/output/table5/*"
 
   "ZPDCT6123" should "be counted." in new SparkFileReader {
     println(getFolder(OUTPUTPATH+FILEPATH_ZPDCT6123).count())

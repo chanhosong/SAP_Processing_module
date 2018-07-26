@@ -17,7 +17,7 @@ class GEN_MARCTest extends FlatSpec {
   }
 
   "MARC" should "be created csv file." in new SparkFileReader {
-    val tb_MBEW = ss.read.option("header", "true").csv(INPUTPATH + FILENPATH_MARC)
-    new GEN_MARC(ss.sqlContext).run(tb_MBEW).coalesce(1).write.option("header", "true").csv(OUTPUTPATH+TABLE6)
+    val tb_MARC = ss.read.option("header", "true").csv(INPUTPATH + FILENPATH_MARC)
+    new GEN_MARC(ss.sqlContext).run(tb_MARC).coalesce(1).write.option("header", "true").csv(OUTPUTPATH+TABLE6)
   }
 }
