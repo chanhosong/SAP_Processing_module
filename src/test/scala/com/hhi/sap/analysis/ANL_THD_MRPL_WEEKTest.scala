@@ -3,7 +3,6 @@ package com.hhi.sap.analysis
 import com.hhi.sap.main.SparkSessionTestWrapper
 import com.hhi.sap.table.term.TERM_MASTER
 import com.hhi.sap.utils.SparkFileReader
-import org.apache.spark.sql.functions._
 import org.scalatest.FlatSpec
 import org.slf4j.LoggerFactory
 
