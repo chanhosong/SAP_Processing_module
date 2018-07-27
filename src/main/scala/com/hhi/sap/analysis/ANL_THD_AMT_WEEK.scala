@@ -95,8 +95,8 @@ class ANL_THD_AMT_WEEK(sql: SQLContext) {
 
     TransformUtils
       .makeUnion(amtRDD.filter(-4 until 19 contains _.week).toDF(), underDF, upperDF)
-      .transform(TransformUtils.pivotTableByAmount)
-      .transform(TransformUtils.mappingTable)
-      .transform(TransformUtils.addSERNO)
+      .transform(TransformUtils.pivotWeekTableByAmount)
+      .transform(TransformUtils.mappingTableByWeek)
+      .transform(TransformUtils.addSERNOByWeek)
   }
 }

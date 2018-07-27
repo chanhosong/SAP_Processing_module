@@ -48,8 +48,8 @@ class ANL_THD_WEIGHT_WEEK(sql: SQLContext) {
 
     TransformUtils
       .makeUnion(weightRDD.filter(-4 until 19 contains _.week).toDF(), underDF, upperDF)
-      .transform(TransformUtils.pivotTableByBrgew)
-      .transform(TransformUtils.mappingTable)
-      .transform(TransformUtils.addSERNO)
+      .transform(TransformUtils.pivotWeekTableByBrgew)
+      .transform(TransformUtils.mappingTableByWeek)
+      .transform(TransformUtils.addSERNOByWeek)
   }
 }

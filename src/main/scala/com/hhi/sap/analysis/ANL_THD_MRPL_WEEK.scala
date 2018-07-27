@@ -13,14 +13,14 @@ class ANL_THD_MRPL_WEEK(sql: SQLContext) {
   private def genTable(zpdct6123: DataFrame): DataFrame = {
     import sql.sparkSession.implicits._
 
-    val mrplRDD = MRPLTableUtils.getMRPLRDD(zpdct6123)
+    val mrplRDD = MRPLTableUtils.getMRPLRDDByWeek(zpdct6123)
     val underDF = MRPLTableUtils.getWeekTable(mrplRDD.filter(_.week <= -5), -5)
     val upperDF = MRPLTableUtils.getWeekTable(mrplRDD.filter(_.week >= 20), 20)
 
     TransformUtils
       .makeUnion(mrplRDD.filter(-4 until 19 contains _.week).toDF(), underDF, upperDF)
-      .transform(TransformUtils.pivotTableByCount)
-      .transform(TransformUtils.mappingTable)
-      .transform(TransformUtils.addSERNO)
+      .transform(TransformUtils.pivotWeekTableByCount)
+      .transform(TransformUtils.mappingTableByWeek)
+      .transform(TransformUtils.addSERNOByWeek)
   }
 }

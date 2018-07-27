@@ -1,7 +1,7 @@
 package com.hhi.sap.analysis.functions
 
 import com.hhi.sap.main.SparkSessionWrapper
-import com.hhi.sap.table.bean.BEAN_THD_MRPL_WEEK_COUNT
+import com.hhi.sap.table.bean.{BEAN_THD_MRPL_MONTH_COUNT, BEAN_THD_MRPL_WEEK_COUNT}
 import com.hhi.sap.table.term.TERM_MASTER
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.DataFrame
@@ -17,12 +17,13 @@ object MRPLTableUtils extends SparkSessionWrapper{
   private val STG_GUBUN = TERM_MASTER.ZPDCT6123.STG_GUBUN
   private val MAT_GUBUN = TERM_MASTER.ZPDCT6123.MAT_GUBUN
   private val WEEK = TERM_MASTER.ZPDCT6123.WEEK
+  private val MONTH = TERM_MASTER.ZPDCT6123.MONTH
   private val COUNT = "count".toUpperCase()
 
   private var PGMID = "Spark2.3.0.cloudera2"
   private var CNAM = "A504863"
 
-  def getMRPLRDD(df: DataFrame): RDD[BEAN_THD_MRPL_WEEK_COUNT] = {
+  def getMRPLRDDByWeek(df: DataFrame): RDD[BEAN_THD_MRPL_WEEK_COUNT] = {
     df.rdd.map(e => Tuple6(e.getAs(COMPANYID).toString,
       e.getAs(SAUPBU).toString,
       e.getAs(PSPID).toString,
@@ -34,6 +35,18 @@ object MRPLTableUtils extends SparkSessionWrapper{
       .map(e => BEAN_THD_MRPL_WEEK_COUNT(e._1._1, e._1._2, e._1._3, e._1._4, e._1._5, e._1._6, e._2))
   }
 
+  def getMRPLRDDByMonth(df: DataFrame): RDD[BEAN_THD_MRPL_MONTH_COUNT] = {
+    df.rdd.map(e => Tuple6(e.getAs(COMPANYID).toString,
+      e.getAs(SAUPBU).toString,
+      e.getAs(PSPID).toString,
+      e.getAs(STG_GUBUN).toString,
+      e.getAs(MAT_GUBUN).toString,
+      e.getAs(MONTH).toString.toInt))
+      .map { case (_companyid, _saupbu, _pspid, _stg_gubun, _mat_gubun, _month) => ((_companyid, _saupbu, _pspid, _stg_gubun, _mat_gubun, _month), 1) }
+      .reduceByKey(_+_)
+      .map(e => BEAN_THD_MRPL_MONTH_COUNT(e._1._1, e._1._2, e._1._3, e._1._4, e._1._5, e._1._6, e._2))
+  }
+
   def getWeekTable(weekRDD: RDD[BEAN_THD_MRPL_WEEK_COUNT], weekNumber: Int): DataFrame = {
     import ss.sqlContext.sparkSession.implicits._
 
@@ -41,5 +54,14 @@ object MRPLTableUtils extends SparkSessionWrapper{
       .reduceByKey(_+_)
       .map { case ((_companyid, _saupbu, _pspid, _stg_gubun, _mat_gubun), _count) => (_companyid, _saupbu, _pspid, _stg_gubun, _mat_gubun, weekNumber, _count) }
       .toDF(COMPANYID, SAUPBU, PSPID, STG_GUBUN, MAT_GUBUN, WEEK, COUNT)
+  }
+
+  def getMonthTable(monthRDD: RDD[BEAN_THD_MRPL_MONTH_COUNT], monthNumber: Int): DataFrame = {
+    import ss.sqlContext.sparkSession.implicits._
+
+    monthRDD.map { BEAN_THD_MRPL_MONTH_TEMP => ((BEAN_THD_MRPL_MONTH_TEMP.companyid, BEAN_THD_MRPL_MONTH_TEMP.saupbu, BEAN_THD_MRPL_MONTH_TEMP.pspid, BEAN_THD_MRPL_MONTH_TEMP.stg_gubun, BEAN_THD_MRPL_MONTH_TEMP.mat_gubun), BEAN_THD_MRPL_MONTH_TEMP.count) }
+      .reduceByKey(_+_)
+      .map { case ((_companyid, _saupbu, _pspid, _stg_gubun, _mat_gubun), _count) => (_companyid, _saupbu, _pspid, _stg_gubun, _mat_gubun, monthNumber, _count) }
+      .toDF(COMPANYID, SAUPBU, PSPID, STG_GUBUN, MAT_GUBUN, MONTH, COUNT)
   }
 }

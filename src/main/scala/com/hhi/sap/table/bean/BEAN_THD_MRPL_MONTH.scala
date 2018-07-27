@@ -1,0 +1,3 @@
+package com.hhi.sap.table.bean
+
+case class BEAN_THD_MRPL_MONTH(companyid: String, saupbu: String, pspid: String/*, serno: String*/, stg_gubun: String, mat_gubun: String, wcm2: String, wcm1: String, wc: String, wcp1: String, wcp2: String, wcp3: String, wcp4: String, wcp5: String, wcp6: String, wcp7: String, wcp8: String, wcp9: String, wcp10: String, pgmid: String, cnam: String, cdat: String, ctim: String)
