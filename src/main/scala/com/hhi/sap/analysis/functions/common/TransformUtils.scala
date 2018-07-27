@@ -2,7 +2,7 @@ package com.hhi.sap.analysis.functions.common
 
 import com.hhi.sap.analysis.functions.WeightTableUtils._
 import com.hhi.sap.config.DateTimeUtil
-import com.hhi.sap.table.bean.{BEAN_THD_MRPL_MONTH, BEAN_THD_WEIGHT_WEEK}
+import com.hhi.sap.table.bean.{BEAN_THD_MONTH, BEAN_THD_WEEK}
 import com.hhi.sap.table.term.TERM_MASTER
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.expressions.Window
@@ -57,7 +57,7 @@ object TransformUtils {
     }
 
     df.map(e => {
-      BEAN_THD_WEIGHT_WEEK(
+      BEAN_THD_WEEK(
         e.getAs(COMPANYID),
         e.getAs(SAUPBU),
         e.getAs(PSPID),
@@ -89,6 +89,11 @@ object TransformUtils {
         Try(e.getAs("18").toString) match { case Success(s) => s case Failure(s) => "0" },
         Try(e.getAs("19").toString) match { case Success(s) => s case Failure(s) => "0" },
         Try(e.getAs("20").toString) match { case Success(s) => s case Failure(s) => "0" },
+        Try(e.getAs("21").toString) match { case Success(s) => s case Failure(s) => "0" },
+        Try(e.getAs("22").toString) match { case Success(s) => s case Failure(s) => "0" },
+        Try(e.getAs("23").toString) match { case Success(s) => s case Failure(s) => "0" },
+        Try(e.getAs("24").toString) match { case Success(s) => s case Failure(s) => "0" },
+        Try(e.getAs("25").toString) match { case Success(s) => s case Failure(s) => "0" },
         PGMID,
         CNAM,
         DateTimeUtil.date,
@@ -106,7 +111,7 @@ object TransformUtils {
     }
 
     df.map(e => {
-      BEAN_THD_MRPL_MONTH(
+      BEAN_THD_MONTH(
         e.getAs(COMPANYID),
         e.getAs(SAUPBU),
         e.getAs(PSPID),
