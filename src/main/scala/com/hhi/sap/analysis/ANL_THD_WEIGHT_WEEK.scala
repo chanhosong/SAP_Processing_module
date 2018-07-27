@@ -44,10 +44,10 @@ class ANL_THD_WEIGHT_WEEK(sql: SQLContext) {
 
     val weightRDD = WeightTableUtils.getWeightRDDByWeek(joinedRDD, mara)
     val underDF = WeightTableUtils.getWeightWeekTable(weightRDD.filter(_.week <= -5), -5)
-    val upperDF = WeightTableUtils.getWeightWeekTable(weightRDD.filter(_.week >= 20), 20)
+    val upperDF = WeightTableUtils.getWeightWeekTable(weightRDD.filter(_.week >= 25), 25)
 
     TransformUtils
-      .makeUnion(weightRDD.filter(-4 until 19 contains _.week).toDF(), underDF, upperDF)
+      .makeUnion(weightRDD.filter(-4 until 24 contains _.week).toDF(), underDF, upperDF)
       .transform(TransformUtils.pivotWeekTableByBrgew)
       .transform(TransformUtils.mappingTableByWeek)
       .transform(TransformUtils.addSERNOByWeek)
