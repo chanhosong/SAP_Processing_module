@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory
 
 object MRPLTableUtils extends SparkSessionWrapper{
   private val logger = LoggerFactory.getLogger(this.getClass)
-
+  
   private val COMPANYID = TERM_MASTER.ZPDCT6123.COMPANYID
   private val SAUPBU = TERM_MASTER.ZPDCT6123.SAUPBU
   private val PSPID = TERM_MASTER.ZPDCT6123.PSPID

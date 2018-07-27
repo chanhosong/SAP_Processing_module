@@ -1,7 +1,6 @@
 package com.hhi.sap.analysis.functions.common
 
-import com.hhi.sap.analysis.functions.WeightTableUtils._
-import DateTimeUtil
+import com.hhi.sap.main.SparkSessionWrapper
 import com.hhi.sap.table.bean.{BEAN_THD_MONTH, BEAN_THD_WEEK}
 import com.hhi.sap.table.term.TERM_MASTER
 import org.apache.spark.sql.DataFrame
@@ -11,7 +10,7 @@ import org.slf4j.LoggerFactory
 
 import scala.util.{Failure, Success, Try}
 
-object TransformUtils {
+object TransformUtils extends SparkSessionWrapper {
   private val logger = LoggerFactory.getLogger(this.getClass)
 
   private val COMPANYID = TERM_MASTER.ZPDCT6023.COMPANYID
