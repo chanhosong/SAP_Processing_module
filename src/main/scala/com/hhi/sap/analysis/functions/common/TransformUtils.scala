@@ -1,7 +1,7 @@
 package com.hhi.sap.analysis.functions.common
 
 import com.hhi.sap.analysis.functions.WeightTableUtils._
-import com.hhi.sap.config.DateTimeUtil
+import DateTimeUtil
 import com.hhi.sap.table.bean.{BEAN_THD_MONTH, BEAN_THD_WEEK}
 import com.hhi.sap.table.term.TERM_MASTER
 import org.apache.spark.sql.DataFrame

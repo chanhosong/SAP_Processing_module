@@ -1,4 +1,4 @@
-package com.hhi.sap.config
+package com.hhi.sap.analysis.functions.common
 
 import java.text.SimpleDateFormat
 import java.util.{Calendar, Date}

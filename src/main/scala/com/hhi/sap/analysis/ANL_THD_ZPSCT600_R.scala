@@ -1,7 +1,7 @@
 package com.hhi.sap.analysis
 
 import com.hhi.sap.analysis.functions.ShipSimilarity
-import com.hhi.sap.config.DateTimeUtil
+import com.hhi.sap.analysis.functions.common.DateTimeUtil
 import com.hhi.sap.table.bean.BEAN_ZPSCT_600_R
 import com.hhi.sap.table.sql.SQL_MASTER
 import com.hhi.sap.table.term.TERM_MASTER

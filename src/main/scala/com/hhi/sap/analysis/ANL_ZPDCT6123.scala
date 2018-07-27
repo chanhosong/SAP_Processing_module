@@ -1,7 +1,7 @@
 package com.hhi.sap.analysis
 
 import com.hhi.sap.analysis.functions.ProcessClassification
-import com.hhi.sap.config.DateTimeUtil
+import com.hhi.sap.analysis.functions.common.DateTimeUtil
 import com.hhi.sap.table.bean.BEAN_ZPDCT6123
 import com.hhi.sap.table.term.TERM_MASTER
 import org.apache.spark.sql.{DataFrame, SQLContext}
