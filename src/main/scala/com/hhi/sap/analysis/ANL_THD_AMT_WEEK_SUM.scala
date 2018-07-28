@@ -98,6 +98,6 @@ class ANL_THD_AMT_WEEK_SUM(sql: SQLContext) {
       .transform(TransformUtils.pivotWeekTableByAmount)
       .transform(TransformUtils.mappingTableByWeek)
       .transform(TransformUtils.addSERNOByWeek)
-      .transform(TransformUtils.comulativeTable)
+      .transform(TransformUtils.cumulativeTable)
   }
 }

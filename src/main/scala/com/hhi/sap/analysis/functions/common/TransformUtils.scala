@@ -51,7 +51,7 @@ object TransformUtils extends SparkSessionWrapper {
 
   def pivotMonthTableByAmount(df: DataFrame): DataFrame = df.groupBy(COMPANYID, SAUPBU, PSPID, STG_GUBUN, MAT_GUBUN).pivot(MONTH).sum(AMOUNT).na.fill(0)
 
-  def comulativeTable(df: DataFrame): DataFrame = {
+  def cumulativeTable(df: DataFrame): DataFrame = {
     val weekNumberColumns = df.columns.filter(!_.matches(columnHeader))
 
     weekNumberColumns.drop(1).foldLeft((df, weekNumberColumns.head))((acc, c) => ( acc._1.withColumn(c, col(acc._2) + col(c)), c ))._1

@@ -51,6 +51,6 @@ class ANL_THD_WEIGHT_WEEK_SUM(sql: SQLContext) {
       .transform(TransformUtils.pivotWeekTableByBrgew)
       .transform(TransformUtils.mappingTableByWeek)
       .transform(TransformUtils.addSERNOByWeek)
-      .transform(TransformUtils.comulativeTable)
+      .transform(TransformUtils.cumulativeTable)
   }
 }
