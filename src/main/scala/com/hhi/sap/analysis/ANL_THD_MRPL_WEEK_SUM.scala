@@ -22,5 +22,6 @@ class ANL_THD_MRPL_WEEK_SUM(sql: SQLContext) {
       .transform(TransformUtils.pivotWeekTableByCount)
       .transform(TransformUtils.mappingTableByWeek)
       .transform(TransformUtils.addSERNOByWeek)
+      .transform(TransformUtils.comulativeTable)
   }
 }

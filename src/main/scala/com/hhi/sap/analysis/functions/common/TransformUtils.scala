@@ -5,7 +5,7 @@ import com.hhi.sap.table.bean.{BEAN_THD_MONTH, BEAN_THD_WEEK}
 import com.hhi.sap.table.term.TERM_MASTER
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.expressions.Window
-import org.apache.spark.sql.functions.row_number
+import org.apache.spark.sql.functions._
 import org.slf4j.LoggerFactory
 
 import scala.util.{Failure, Success, Try}
@@ -28,6 +28,10 @@ object TransformUtils extends SparkSessionWrapper {
 
   private var PGMID = "Spark2.3.0.cloudera2"
   private var CNAM = "A504863"
+  private val CDAT = TERM_MASTER.ZPDCT6023.CDAT
+  private val CTIM = TERM_MASTER.ZPDCT6023.CTIM
+
+  private val columnHeader = "companyid|saupbu|pspid|stg_gubun|mat_gubun|pgmid|cnam|cdat|ctim|serno"
 
   def makeUnion(df: DataFrame, underRDD: DataFrame, upperRDD: DataFrame): DataFrame = df.union(underRDD).union(upperRDD)
 
@@ -46,6 +50,12 @@ object TransformUtils extends SparkSessionWrapper {
   def pivotMonthTableByCount(df: DataFrame): DataFrame = df.groupBy(COMPANYID, SAUPBU, PSPID, STG_GUBUN, MAT_GUBUN).pivot(MONTH).sum(COUNT).na.fill(0)
 
   def pivotMonthTableByAmount(df: DataFrame): DataFrame = df.groupBy(COMPANYID, SAUPBU, PSPID, STG_GUBUN, MAT_GUBUN).pivot(MONTH).sum(AMOUNT).na.fill(0)
+
+  def comulativeTable(df: DataFrame): DataFrame = {
+    val weekNumberColumns = df.columns.filter(!_.matches(columnHeader))
+
+    weekNumberColumns.drop(1).foldLeft((df, weekNumberColumns.head))((acc, c) => ( acc._1.withColumn(c, col(acc._2) + col(c)), c ))._1
+  }
 
   def mappingTableByWeek(df: DataFrame): DataFrame = {
     import ss.sqlContext.sparkSession.implicits._
@@ -99,6 +109,60 @@ object TransformUtils extends SparkSessionWrapper {
         DateTimeUtil.time
       )
     }).toDF()
+  }
+
+  def mappingTableSumByWeek(df: DataFrame): DataFrame = {
+    import ss.sqlContext.sparkSession.implicits._
+
+    if (logger.isDebugEnabled) {
+      PGMID = "[DEBUGMODE]Spark2.3.0.cloudera2"
+      CNAM = "[DEBUGMODE]A504863"
+    }
+
+    df.map(e => {
+      BEAN_THD_WEEK(
+        e.getAs(COMPANYID),
+        e.getAs(SAUPBU),
+        e.getAs(PSPID),
+        e.getAs(STG_GUBUN),
+        e.getAs(MAT_GUBUN),
+        Try(e.getAs("-5").toString) match { case Success(s) => s case Failure(s) => "0" },
+        Try(e.getAs("-4").toString) match { case Success(s) => s case Failure(s) => "0" },
+        Try(e.getAs("-3").toString) match { case Success(s) => s case Failure(s) => "0" },
+        Try(e.getAs("-2").toString) match { case Success(s) => s case Failure(s) => "0" },
+        Try(e.getAs("-1").toString) match { case Success(s) => s case Failure(s) => "0" },
+        Try(e.getAs("0").toString) match { case Success(s) => s case Failure(s) => "0" },
+        Try(e.getAs("1").toString) match { case Success(s) => s case Failure(s) => "0" },
+        Try(e.getAs("2").toString) match { case Success(s) => s case Failure(s) => "0" },
+        Try(e.getAs("3").toString) match { case Success(s) => s case Failure(s) => "0" },
+        Try(e.getAs("4").toString) match { case Success(s) => s case Failure(s) => "0" },
+        Try(e.getAs("5").toString) match { case Success(s) => s case Failure(s) => "0" },
+        Try(e.getAs("6").toString) match { case Success(s) => s case Failure(s) => "0" },
+        Try(e.getAs("7").toString) match { case Success(s) => s case Failure(s) => "0" },
+        Try(e.getAs("8").toString) match { case Success(s) => s case Failure(s) => "0" },
+        Try(e.getAs("9").toString) match { case Success(s) => s case Failure(s) => "0" },
+        Try(e.getAs("10").toString) match { case Success(s) => s case Failure(s) => "0" },
+        Try(e.getAs("11").toString) match { case Success(s) => s case Failure(s) => "0" },
+        Try(e.getAs("12").toString) match { case Success(s) => s case Failure(s) => "0" },
+        Try(e.getAs("13").toString) match { case Success(s) => s case Failure(s) => "0" },
+        Try(e.getAs("14").toString) match { case Success(s) => s case Failure(s) => "0" },
+        Try(e.getAs("15").toString) match { case Success(s) => s case Failure(s) => "0" },
+        Try(e.getAs("16").toString) match { case Success(s) => s case Failure(s) => "0" },
+        Try(e.getAs("17").toString) match { case Success(s) => s case Failure(s) => "0" },
+        Try(e.getAs("18").toString) match { case Success(s) => s case Failure(s) => "0" },
+        Try(e.getAs("19").toString) match { case Success(s) => s case Failure(s) => "0" },
+        Try(e.getAs("20").toString) match { case Success(s) => s case Failure(s) => "0" },
+        Try(e.getAs("21").toString) match { case Success(s) => s case Failure(s) => "0" },
+        Try(e.getAs("22").toString) match { case Success(s) => s case Failure(s) => "0" },
+        Try(e.getAs("23").toString) match { case Success(s) => s case Failure(s) => "0" },
+        Try(e.getAs("24").toString) match { case Success(s) => s case Failure(s) => "0" },
+        Try(e.getAs("25").toString) match { case Success(s) => s case Failure(s) => "0" },
+        PGMID,
+        CNAM,
+        DateTimeUtil.date,
+        DateTimeUtil.time
+      )}
+    ).toDF()
   }
 
   def mappingTableByMonth(df: DataFrame): DataFrame = {
