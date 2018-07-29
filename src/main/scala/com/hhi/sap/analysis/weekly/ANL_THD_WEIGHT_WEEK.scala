@@ -1,4 +1,4 @@
-package com.hhi.sap.analysis
+package com.hhi.sap.analysis.weekly
 
 import com.hhi.sap.analysis.functions.WeightTableUtils
 import com.hhi.sap.analysis.functions.common.TransformUtils
@@ -6,7 +6,7 @@ import com.hhi.sap.table.term.TERM_MASTER
 import org.apache.spark.sql.{DataFrame, SQLContext}
 import org.slf4j.LoggerFactory
 
-class ANL_THD_WEIGHT_MONTH(sql: SQLContext) {
+class ANL_THD_WEIGHT_WEEK(sql: SQLContext) {
   private val logger = LoggerFactory.getLogger(this.getClass)
 
   def run(zpdct6023: DataFrame, mara: DataFrame): DataFrame = genTable(zpdct6023, mara)
@@ -27,7 +27,7 @@ class ANL_THD_WEIGHT_MONTH(sql: SQLContext) {
         , s"${TERM_MASTER.ZPDCT6023.TABLENAME}.${TERM_MASTER.ZPDCT6023.MENGE}"
         , s"${TERM_MASTER.ZPDCT6023.TABLENAME}.${TERM_MASTER.ZPDCT6023.BRGEW}"
         , s"${TERM_MASTER.MARA.TABLENAME}.${TERM_MASTER.MARA.BRGEW}"
-        , s"${TERM_MASTER.ZPDCT6023.TABLENAME}.${TERM_MASTER.ZPDCT6023.MONTH}"
+        , s"${TERM_MASTER.ZPDCT6023.TABLENAME}.${TERM_MASTER.ZPDCT6023.WEEK}"
       ).toDF(
       TERM_MASTER.ZPDCT6023.COMPANYID,
       TERM_MASTER.ZPDCT6023.SAUPBU,
@@ -39,17 +39,17 @@ class ANL_THD_WEIGHT_MONTH(sql: SQLContext) {
       TERM_MASTER.ZPDCT6023.MENGE,
       TERM_MASTER.ZPDCT6023.BRGEW,
       TERM_MASTER.MARA.BRGEW+"_A",
-      TERM_MASTER.ZPDCT6023.MONTH
+      TERM_MASTER.ZPDCT6023.WEEK
     )
 
-    val weightRDD = WeightTableUtils.getWeightRDDByMonth(joinedRDD, mara)
-    val underDF = WeightTableUtils.getWeightMonthTable(weightRDD.filter(_.month <= -2), -2)
-    val upperDF = WeightTableUtils.getWeightMonthTable(weightRDD.filter(_.month >= 10), 10)
+    val weightRDD = WeightTableUtils.getWeightRDDByWeek(joinedRDD, mara)
+    val underDF = WeightTableUtils.getWeightWeekTable(weightRDD.filter(_.week <= -5), -5)
+    val upperDF = WeightTableUtils.getWeightWeekTable(weightRDD.filter(_.week >= 25), 25)
 
     TransformUtils
-      .makeUnion(weightRDD.filter(-1 until 9 contains _.month).toDF(), underDF, upperDF)
-      .transform(TransformUtils.pivotMonthTableByBrgew)
-      .transform(TransformUtils.mappingTableByMonth)
-      .transform(TransformUtils.addSERNOByMonth)
+      .makeUnion(weightRDD.filter(-4 until 24 contains _.week).toDF(), underDF, upperDF)
+      .transform(TransformUtils.pivotWeekTableByBrgew)
+      .transform(TransformUtils.mappingTableByWeek)
+      .transform(TransformUtils.addSERNOByWeek)
   }
 }

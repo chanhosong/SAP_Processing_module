@@ -1,4 +1,4 @@
-package com.hhi.sap.analysis
+package com.hhi.sap.analysis.daily
 
 import com.hhi.sap.analysis.functions.ShipSimilarity
 import com.hhi.sap.analysis.functions.common.DateTimeUtil

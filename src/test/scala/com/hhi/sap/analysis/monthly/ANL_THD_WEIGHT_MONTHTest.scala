@@ -1,4 +1,4 @@
-package com.hhi.sap.analysis
+package com.hhi.sap.analysis.monthly
 
 import com.hhi.sap.table.term.TERM_MASTER
 import com.hhi.sap.utils.SparkFileReader

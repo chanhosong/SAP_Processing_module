@@ -1,4 +1,4 @@
-package com.hhi.sap.analysis
+package com.hhi.sap.analysis.weekly
 
 import com.hhi.sap.main.SparkSessionTestWrapper
 import com.hhi.sap.table.term.TERM_MASTER

@@ -1,4 +1,4 @@
-package com.hhi.sap.analysis
+package com.hhi.sap.analysis.weekly
 
 import com.hhi.sap.analysis.functions.AMTTableUtils
 import com.hhi.sap.analysis.functions.common.TransformUtils
@@ -6,7 +6,7 @@ import com.hhi.sap.table.term.TERM_MASTER
 import org.apache.spark.sql.{DataFrame, SQLContext}
 import org.slf4j.LoggerFactory
 
-class ANL_THD_AMT_WEEK_SUM(sql: SQLContext) {
+class ANL_THD_AMT_WEEK(sql: SQLContext) {
   private val logger = LoggerFactory.getLogger(this.getClass)
 
   def run(zpdct6123: DataFrame, mara: DataFrame, marc: DataFrame, qbew: DataFrame, mbew: DataFrame): DataFrame = genTable(zpdct6123, mara, marc, qbew, mbew)
@@ -98,6 +98,5 @@ class ANL_THD_AMT_WEEK_SUM(sql: SQLContext) {
       .transform(TransformUtils.pivotWeekTableByAmount)
       .transform(TransformUtils.mappingTableByWeek)
       .transform(TransformUtils.addSERNOByWeek)
-      .transform(TransformUtils.cumulativeTable)
   }
 }

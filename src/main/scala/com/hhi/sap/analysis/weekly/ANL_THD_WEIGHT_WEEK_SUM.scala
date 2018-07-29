@@ -1,4 +1,4 @@
-package com.hhi.sap.analysis
+package com.hhi.sap.analysis.weekly
 
 import com.hhi.sap.analysis.functions.WeightTableUtils
 import com.hhi.sap.analysis.functions.common.TransformUtils

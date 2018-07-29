@@ -1,4 +1,4 @@
-package com.hhi.sap.analysis
+package com.hhi.sap.analysis.monthly
 
 import com.hhi.sap.analysis.functions.MRPLTableUtils
 import com.hhi.sap.analysis.functions.common.TransformUtils

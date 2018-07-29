@@ -1,4 +1,4 @@
-package com.hhi.sap.analysis
+package com.hhi.sap.analysis.weekly
 
 import com.hhi.sap.analysis.functions.AMTTableUtils
 import com.hhi.sap.analysis.functions.common.TransformUtils
@@ -6,7 +6,7 @@ import com.hhi.sap.table.term.TERM_MASTER
 import org.apache.spark.sql.{DataFrame, SQLContext}
 import org.slf4j.LoggerFactory
 
-class ANL_THD_AMT_MONTH(sql: SQLContext) {
+class ANL_THD_AMT_WEEK_SUM(sql: SQLContext) {
   private val logger = LoggerFactory.getLogger(this.getClass)
 
   def run(zpdct6123: DataFrame, mara: DataFrame, marc: DataFrame, qbew: DataFrame, mbew: DataFrame): DataFrame = genTable(zpdct6123, mara, marc, qbew, mbew)
@@ -35,7 +35,7 @@ class ANL_THD_AMT_MONTH(sql: SQLContext) {
         , s"${TERM_MASTER.QBEW.TABLENAME}.${TERM_MASTER.QBEW.VERPR}"
         , s"${TERM_MASTER.QBEW.TABLENAME}.${TERM_MASTER.QBEW.PEINH}"
         , s"${TERM_MASTER.QBEW.TABLENAME}.${TERM_MASTER.QBEW.SOBKZ}"
-        , s"${TERM_MASTER.ZPDCT6123.TABLENAME}.${TERM_MASTER.ZPDCT6123.MONTH}"
+        , s"${TERM_MASTER.ZPDCT6123.TABLENAME}.${TERM_MASTER.ZPDCT6123.WEEK}"
       ).toDF(
       TERM_MASTER.ZPDCT6123.COMPANYID,
       TERM_MASTER.ZPDCT6123.SAUPBU,
@@ -50,7 +50,7 @@ class ANL_THD_AMT_MONTH(sql: SQLContext) {
       TERM_MASTER.QBEW.VERPR,
       TERM_MASTER.QBEW.PEINH,
       TERM_MASTER.QBEW.SOBKZ,
-      TERM_MASTER.ZPDCT6123.MONTH
+      TERM_MASTER.ZPDCT6123.WEEK
     )
 
     val joinedRDD2 = zpdct6123.as(TERM_MASTER.ZPDCT6123.TABLENAME)
@@ -72,7 +72,7 @@ class ANL_THD_AMT_MONTH(sql: SQLContext) {
         , s"${TERM_MASTER.MARC.TABLENAME}.${TERM_MASTER.MARC.SBDKZ}"
         , s"${TERM_MASTER.MBEW.TABLENAME}.${TERM_MASTER.MBEW.VERPR}"
         , s"${TERM_MASTER.MBEW.TABLENAME}.${TERM_MASTER.MBEW.PEINH}"
-        , s"${TERM_MASTER.ZPDCT6123.TABLENAME}.${TERM_MASTER.ZPDCT6123.MONTH}"
+        , s"${TERM_MASTER.ZPDCT6123.TABLENAME}.${TERM_MASTER.ZPDCT6123.WEEK}"
       ).toDF(
       TERM_MASTER.ZPDCT6123.COMPANYID,
       TERM_MASTER.ZPDCT6123.SAUPBU,
@@ -86,17 +86,18 @@ class ANL_THD_AMT_MONTH(sql: SQLContext) {
       TERM_MASTER.MARC.SBDKZ,
       TERM_MASTER.MBEW.VERPR,
       TERM_MASTER.MBEW.PEINH,
-      TERM_MASTER.ZPDCT6123.MONTH
+      TERM_MASTER.ZPDCT6123.WEEK
     )
 
-    val amtRDD = AMTTableUtils.getAMTRDDByMonth(joinedRDD1).union(AMTTableUtils.getAMTRDDByMonth(joinedRDD2))
-    val underDF = AMTTableUtils.getMonthTable(amtRDD.filter(_.month <= -2), -2)
-    val upperDF = AMTTableUtils.getMonthTable(amtRDD.filter(_.month >= 10), 10)
+    val amtRDD = AMTTableUtils.getAMTRDDByWeek(joinedRDD1).union(AMTTableUtils.getAMTRDDByWeek(joinedRDD2))
+    val underDF = AMTTableUtils.getWeekTable(amtRDD.filter(_.week <= -5), -5)
+    val upperDF = AMTTableUtils.getWeekTable(amtRDD.filter(_.week >= 25), 25)
 
     TransformUtils
-      .makeUnion(amtRDD.filter(-1 until 9 contains _.month).toDF(), underDF, upperDF)
-      .transform(TransformUtils.pivotMonthTableByAmount)
-      .transform(TransformUtils.mappingTableByMonth)
-      .transform(TransformUtils.addSERNOByMonth)
+      .makeUnion(amtRDD.filter(-4 until 24 contains _.week).toDF(), underDF, upperDF)
+      .transform(TransformUtils.pivotWeekTableByAmount)
+      .transform(TransformUtils.mappingTableByWeek)
+      .transform(TransformUtils.addSERNOByWeek)
+      .transform(TransformUtils.cumulativeTable)
   }
 }
